@@ -7,6 +7,24 @@
 
 import Foundation
 
+struct Products: Decodable {
+    let pageNo: Int
+    let itemsPerPage: Int
+    let totalCount: Int
+    let offset: Int
+    let limit: Int
+    let pages: [ProductsDetail]
+    
+    private enum CodingKeys: String, CodingKey {
+        case pageNo = "page_no"
+        case itemsPerPage = "items_per_page"
+        case totalCount = "total_count"
+        case offset
+        case limit
+        case pages
+    }
+}
+
 struct ProductsDetail: Decodable {
     let id: Int
     let vendorId: Int
