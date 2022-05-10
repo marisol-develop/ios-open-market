@@ -11,3 +11,10 @@ struct MockData {
     let data = Data()
 }
 
+final class MockURLSessionDataTask: URLSessionDataTask {
+    var completion: () -> Void = {}
+    
+    override func resume() {
+        completion()
+    }
+}
