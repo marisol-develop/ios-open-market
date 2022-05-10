@@ -2,7 +2,7 @@
 //  Products.swift
 //  OpenMarket
 //
-//  Created by Eddy on 2022/05/09.
+//  Created by Eddy, marisol on 2022/05/09.
 //
 
 import Foundation
