@@ -2,26 +2,26 @@
 //  OpenMarketTests.swift
 //  OpenMarketTests
 //
-//  Created by marisol on 2022/05/11.
+//  Created by Eddy, marisol on 2022/05/11.
 //
 
 import XCTest
 @testable import OpenMarket
 
 class OpenMarketTests: XCTestCase {
-    var sut: NetworkManager<Products>!
+    var sutProduct: NetworkManager<Products>!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        sut = NetworkManager<Products>(session: URLSession.shared)
+        sutProduct = NetworkManager<Products>(session: URLSession.shared)
     }
 
     override func tearDownWithError() throws {
         try super.tearDownWithError()
-        sut = nil
+        sutProduct = nil
     }
     
-    func test_response를success로정해두고_dummy데이터와_실제값의일치여부확인() {
+    func test_response를_success로정해두고_product의_dummy데이터와_실제값이일치한다() {
         let promise = expectation(description: "success")
         guard let url = URL(string: "fakeURL") else {
             return
@@ -35,11 +35,11 @@ class OpenMarketTests: XCTestCase {
         let dummy = DummyData(data: dummyData.data, response: response, error: nil)
         let stubUrlSession = StubURLSession(dummy: dummy)
         
-        sut.session = stubUrlSession
+        sutProduct.session = stubUrlSession
         
         var totalCount: Int = 0
         
-        sut.execute(with: url) { result in
+        sutProduct.execute(with: url) { result in
             switch result {
             case .success(let product):
                 totalCount = product.totalCount
@@ -52,7 +52,7 @@ class OpenMarketTests: XCTestCase {
         XCTAssertEqual(totalCount, 10)
     }
     
-    func test_response를fail로정해두고_statusCodeError타입확인() {
+    func test_response를_fail로정해두고_product의_statusCodeError타입확인한다() {
         let promise = expectation(description: "failure")
         guard let url = URL(string: "fakeURL") else {
             return
@@ -66,12 +66,12 @@ class OpenMarketTests: XCTestCase {
         let dummy = DummyData(data: dummyData.data, response: response, error: nil)
         let stubUrlSession = StubURLSession(dummy: dummy)
         
-        sut.session = stubUrlSession
+        sutProduct.session = stubUrlSession
         
         var totalCount: Int = 0
         var errorResult: NetworkError? = nil
         
-        sut.execute(with: url) { result in
+        sutProduct.execute(with: url) { result in
             switch result {
             case .success(let product):
                 totalCount = product.totalCount
