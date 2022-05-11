@@ -20,10 +20,15 @@ struct DummyData {
 }
 
 final class StubURLSessionDataTask: URLSessionDataTask {
-    var completion: () -> Void = {}
+    var dummyData: DummyData?
+    
+    init(dummy: DummyData?, completionHandler: DataTaskCompletionHandler?) {
+        self.dummyData = dummy
+        self.dummyData?.completionHandler = completionHandler
+    }
     
     override func resume() {
-        completion()
+        dummyData?.completion()
     }
 }
 
