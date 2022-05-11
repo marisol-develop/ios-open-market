@@ -62,36 +62,44 @@ class OpenMarketTests: XCTestCase {
         XCTAssertEqual(totalCount, expectedResult)
     }
     
-    func test_response를_fail로정해두고_product의_statusCodeError타입확인한다() {
+    func test_statusCode를_400설정하면_발생하는에러가_statusCodeError와_일치한다() {
+        // given
         let promise = expectation(description: "failure")
+        
         guard let url = URL(string: "fakeURL") else {
+            XCTFail("URL 포맷팅 실패")
             return
         }
         
         guard let dummyData = NSDataAsset(name: "products") else {
+            XCTFail("Data 포맷팅 실패")
             return
         }
         
-        let response = HTTPURLResponse(url: url, statusCode: 400, httpVersion: nil, headerFields: nil)
+        let response = HTTPURLResponse(url: url,
+                                       statusCode: 400,
+                                       httpVersion: nil,
+                                       headerFields: nil)
         let dummy = DummyData(data: dummyData.data, response: response, error: nil)
         let stubUrlSession = StubURLSession(dummy: dummy)
-        
         sutProduct.session = stubUrlSession
         
-        var totalCount: Int = 0
         var errorResult: NetworkError? = nil
         
+        // when
         sutProduct.execute(with: url) { result in
             switch result {
-            case .success(let product):
-                totalCount = product.totalCount
+            case .success:
+                XCTFail()
             case .failure(let error):
                 errorResult = error
             }
             promise.fulfill()
         }
+        
         wait(for: [promise], timeout: 10)
-        XCTAssertNotEqual(totalCount, 10)
+        
+        // then
         XCTAssertEqual(errorResult, NetworkError.statusCode)
     }
     
