@@ -1,5 +1,5 @@
 //
-//  MockURLSession.swift
+//  StubURLSession.swift
 //  OpenMarket
 //
 //  Created by Eddy, marisol on 2022/05/10.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct MockData {
+struct DummyData {
     let data = Data()
 }
 
-final class MockURLSessionDataTask: URLSessionDataTask {
+final class StubURLSessionDataTask: URLSessionDataTask {
     var completion: () -> Void = {}
     
     override func resume() {
@@ -19,16 +19,16 @@ final class MockURLSessionDataTask: URLSessionDataTask {
     }
 }
 
-final class MockURLSession: URLSessionProtocol {
+final class StubURLSession: URLSessionProtocol {
     private var isRequestSuccess: Bool
-    private var sessionDataTask: MockURLSessionDataTask?
+    private var sessionDataTask: StubURLSessionDataTask?
     
     init(isRequestSucceses: Bool = true) {
         self.isRequestSuccess = isRequestSucceses
     }
     
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        let sessionDataTask = MockURLSessionDataTask()
+        let sessionDataTask = StubURLSessionDataTask()
         
         guard let url = request.url else {
             return URLSessionDataTask()
@@ -45,7 +45,7 @@ final class MockURLSession: URLSessionProtocol {
         
         if isRequestSuccess {
             sessionDataTask.completion = {
-                completionHandler(MockData().data, successResponse, nil)
+                completionHandler(DummyData().data, successResponse, nil)
             }
         } else {
             sessionDataTask.completion = {
