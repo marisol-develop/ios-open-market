@@ -21,35 +21,45 @@ class OpenMarketTests: XCTestCase {
         sutProduct = nil
     }
     
-    func test_response를_success로정해두고_product의_dummy데이터와_실제값이일치한다() {
+    func test_Product_dummy데이터의_totalCount과_예상값이_일치한다() {
+        // given
         let promise = expectation(description: "success")
+        var totalCount: Int = 0
+        let expectedResult: Int = 10
+        
         guard let url = URL(string: "fakeURL") else {
+            XCTFail("URL 포맷팅 실패")
             return
         }
         
-        guard let dummyData = NSDataAsset(name: "products") else {
+        guard let dummy = NSDataAsset(name: "products") else {
+            XCTFail("Data 포맷팅 실패")
             return
         }
         
-        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
-        let dummy = DummyData(data: dummyData.data, response: response, error: nil)
-        let stubUrlSession = StubURLSession(dummy: dummy)
-        
+        let response = HTTPURLResponse(url: url,
+                                       statusCode: 200,
+                                       httpVersion: nil,
+                                       headerFields: nil)
+        let dummyData = DummyData(data: dummy.data, response: response, error: nil)
+        let stubUrlSession = StubURLSession(dummy: dummyData)
         sutProduct.session = stubUrlSession
         
-        var totalCount: Int = 0
-        
+        // when
         sutProduct.execute(with: url) { result in
             switch result {
             case .success(let product):
                 totalCount = product.totalCount
             case .failure(let error):
-                print(error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
             promise.fulfill()
         }
+        
         wait(for: [promise], timeout: 10)
-        XCTAssertEqual(totalCount, 10)
+        
+        // then
+        XCTAssertEqual(totalCount, expectedResult)
     }
     
     func test_response를_fail로정해두고_product의_statusCodeError타입확인한다() {
