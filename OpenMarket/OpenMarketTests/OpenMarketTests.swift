@@ -85,4 +85,21 @@ class OpenMarketTests: XCTestCase {
         XCTAssertEqual(errorResult, NetworkError.statusCode)
     }
     
+    func test_decodeError타입확인() {
+        let jsonDecoder = JSONDecoder()
+        guard let data = NSDataAsset(name: "products") else {
+            return
+        }
+        do {
+            let _ = try jsonDecoder.decode(Products.self, from: data.data)
+        } catch {
+            XCTFail()
+        }
+    }
+}
+
+struct MockParser<T: Decodable> {
+    func decode() throws -> T {
+        throw NetworkError.decode
+    }
 }
