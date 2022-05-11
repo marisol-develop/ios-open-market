@@ -85,19 +85,39 @@ class OpenMarketTests: XCTestCase {
         XCTAssertEqual(errorResult, NetworkError.statusCode)
     }
     
-    func test_decodeError타입확인() {
-        let jsonDecoder = JSONDecoder()
-        guard let data = NSDataAsset(name: "products") else {
+    func test_response를_success로정해두고_productDetail의_dummy데이터와_실제값이일치한다() {
+        let promise = expectation(description: "success")
+        guard let url = URL(string: "fakeURL") else {
             return
         }
         
         guard let dummyData = NSDataAsset(name: "products") else {
             return
         }
+        
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let dummy = DummyData(data: dummyData.data, response: response, error: nil)
+        let stubUrlSession = StubURLSession(dummy: dummy)
+        
+        sutProduct.session = stubUrlSession
+        
+        var venderId: Int = 0
+        
+        sutProduct.execute(with: url) { result in
+            switch result {
+            case .success(let product):
+                
+                venderId = product.pages[0].vendorId
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            promise.fulfill()
         }
+        
+        wait(for: [promise], timeout: 10)
+        XCTAssertEqual(venderId, 3)
     }
-}
-
+    
         let response = HTTPURLResponse(url: url, statusCode: 400, httpVersion: nil, headerFields: nil)
         let dummy = DummyData(data: dummyData.data, response: response, error: nil)
         let stubUrlSession = StubURLSession(dummy: dummy)
