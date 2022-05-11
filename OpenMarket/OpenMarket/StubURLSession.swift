@@ -33,39 +33,14 @@ final class StubURLSessionDataTask: URLSessionDataTask {
 }
 
 final class StubURLSession: URLSessionProtocol {
-    private var isRequestSuccess: Bool
-    private var sessionDataTask: StubURLSessionDataTask?
+    var dummyData: DummyData?
     
-    init(isRequestSucceses: Bool = true) {
-        self.isRequestSuccess = isRequestSucceses
+    init(dummy: DummyData) {
+        self.dummyData = dummy
     }
     
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        let sessionDataTask = StubURLSessionDataTask()
-        
-        guard let url = request.url else {
-            return URLSessionDataTask()
-        }
-        
-        let successResponse = HTTPURLResponse(url: url,
-                                              statusCode: 200,
-                                              httpVersion: "2",
-                                              headerFields: nil)
-        let failureResponse = HTTPURLResponse(url: url,
-                                              statusCode: 404,
-                                              httpVersion: "2",
-                                              headerFields: nil)
-        
-        if isRequestSuccess {
-            sessionDataTask.completion = {
-                completionHandler(DummyData().data, successResponse, nil)
-            }
-        } else {
-            sessionDataTask.completion = {
-                completionHandler(nil, failureResponse, nil)
-            }
-        }
+    func dataTask(with url: URL, completionHandler: @escaping DataTaskCompletionHandler) -> URLSessionDataTask {
 
-        return sessionDataTask
+        return StubURLSessionDataTask(dummy: dummyData, completionHandler: completionHandler)
     }
 }
