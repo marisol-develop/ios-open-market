@@ -6,9 +6,17 @@
 //
 
 import Foundation
+import UIKit
 
 struct DummyData {
-    let data = Data()
+    let data: Data?
+    let response: HTTPURLResponse?
+    let error: Error?
+    var completionHandler: DataTaskCompletionHandler?
+    
+    func completion() {
+        completionHandler?(data, response, error)
+    }
 }
 
 final class StubURLSessionDataTask: URLSessionDataTask {
