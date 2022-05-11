@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct DummyData {
     let data: Data?
