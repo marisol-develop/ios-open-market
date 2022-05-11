@@ -10,15 +10,18 @@ import XCTest
 
 class OpenMarketTests: XCTestCase {
     var sutProduct: NetworkManager<Products>!
+    var sutHealthChecker: NetworkManager<String>!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         sutProduct = NetworkManager<Products>(session: URLSession.shared)
+        sutHealthChecker = NetworkManager<String>(session: URLSession.shared)
     }
 
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         sutProduct = nil
+        sutHealthChecker = nil
     }
     
     func test_Product_dummy데이터의_totalCount과_예상값이_일치한다() {
@@ -142,5 +145,33 @@ class OpenMarketTests: XCTestCase {
         
         // then
         XCTAssertEqual(venderId, expectedResult)
+    }
+    
+    func test_healthCheckerPath_API_network_통신해서_가져온데이터가_OK와_일치한다() {
+        // given
+        let promise = expectation(description: "success")
+        var okResult = ""
+        let expectedResult = "OK"
+        
+        guard let url = URL(string: API.hostApi + API.healthCheckerPath) else {
+            XCTFail("URL 포맷팅 실패")
+            return
+        }
+        
+        // when
+        sutHealthChecker.execute(with: url) { result in
+            switch result {
+            case .success(let result):
+                okResult = result
+            case .failure(let error):
+                XCTFail(error.localizedDescription)
+            }
+            promise.fulfill()
+        }
+        
+        wait(for: [promise], timeout: 10)
+
+        // then
+        XCTAssertEqual(okResult, expectedResult)
     }
 }
