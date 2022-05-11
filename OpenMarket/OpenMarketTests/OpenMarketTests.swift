@@ -51,4 +51,38 @@ class OpenMarketTests: XCTestCase {
         wait(for: [promise], timeout: 10)
         XCTAssertEqual(totalCount, 10)
     }
+    
+    func test_response를fail로정해두고_statusCodeError타입확인() {
+        let promise = expectation(description: "failure")
+        guard let url = URL(string: "fakeURL") else {
+            return
+        }
+        
+        guard let dummyData = NSDataAsset(name: "products") else {
+            return
+        }
+        
+        let response = HTTPURLResponse(url: url, statusCode: 400, httpVersion: nil, headerFields: nil)
+        let dummy = DummyData(data: dummyData.data, response: response, error: nil)
+        let stubUrlSession = StubURLSession(dummy: dummy)
+        
+        sut.session = stubUrlSession
+        
+        var totalCount: Int = 0
+        var errorResult: NetworkError? = nil
+        
+        sut.execute(with: url) { result in
+            switch result {
+            case .success(let product):
+                totalCount = product.totalCount
+            case .failure(let error):
+                errorResult = error
+            }
+            promise.fulfill()
+        }
+        wait(for: [promise], timeout: 10)
+        XCTAssertNotEqual(totalCount, 10)
+        XCTAssertEqual(errorResult, NetworkError.statusCode)
+    }
+    
 }
