@@ -90,16 +90,16 @@ class OpenMarketTests: XCTestCase {
         guard let data = NSDataAsset(name: "products") else {
             return
         }
-        do {
-            let _ = try jsonDecoder.decode(Products.self, from: data.data)
-        } catch {
-            XCTFail()
+        
+        guard let dummyData = NSDataAsset(name: "products") else {
+            return
+        }
         }
     }
 }
 
-struct MockParser<T: Decodable> {
-    func decode() throws -> T {
-        throw NetworkError.decode
+        let response = HTTPURLResponse(url: url, statusCode: 400, httpVersion: nil, headerFields: nil)
+        let dummy = DummyData(data: dummyData.data, response: response, error: nil)
+        let stubUrlSession = StubURLSession(dummy: dummy)
     }
 }
