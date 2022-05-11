@@ -8,7 +8,6 @@
 import Foundation
 
 enum NetworkError: Error {
-    case url
     case error
     case data
     case statusCode
