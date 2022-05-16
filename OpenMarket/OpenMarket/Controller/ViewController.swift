@@ -8,13 +8,15 @@ import UIKit
 
 final class ViewController: UIViewController {
 
-    let productView = ProductView()
+    lazy var productView = ProductView.init(frame: view.bounds)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        productView.backgroundColor = .white
+        self.view = productView
+        view.backgroundColor = .white
         navigationItem.titleView = productView.makeSegmentedControl()
         navigationItem.rightBarButtonItem = productView.makePlusButton()
+        view.addSubview(productView.makeCollectionView())
+        productView.makeLayout()
     }
 }
-
