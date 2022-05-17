@@ -7,13 +7,15 @@
 
 import UIKit
 
-class CollectionViewCell: UICollectionViewCell {
+final class CollectionViewCell: UICollectionViewCell {
     static let identifier = "CollectionViewCell"
+    var productImage: UIImageView = UIImageView()
+    var productName: UILabel = UILabel()
+    var currency: UILabel = UILabel()
+    var price: UILabel = UILabel()
+    var bargainPrice: UILabel = UILabel()
+    var stock: UILabel = UILabel()
     
-    @IBOutlet weak var productImage: UIImageView!
-    @IBOutlet weak var productName: UILabel!
-    @IBOutlet weak var currency: UILabel!
-    @IBOutlet weak var price: UILabel!
-    @IBOutlet weak var bargainPrice: UILabel!
-    @IBOutlet weak var stock: UILabel!
+    
+    
 }
