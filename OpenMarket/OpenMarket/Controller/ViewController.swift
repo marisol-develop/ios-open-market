@@ -126,8 +126,8 @@ final class ViewController: UIViewController {
     
     func applySnapshot(animatingDifferences: Bool = true) {
         var snapShot = Snapshot()
-        snapShot.appendSections([Section.main])
-        snapShot.appendItems(item, toSection: Section.main)
+        snapShot.appendSections([.main])
+        snapShot.appendItems(item)
         dataSource.apply(snapShot, animatingDifferences: animatingDifferences)
     }
 }
