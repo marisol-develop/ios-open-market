@@ -10,6 +10,16 @@ enum Section: Int {
     case main
 }
 
+struct Product: APIable {
+    var hostAPI: String = "https://market-training.yagom-academy.kr"
+    var path: String = "/api/products"
+    var param: [String : String]? = [
+        "page_no": "1",
+        "items_per_page": "10"
+    ]
+    var method: HTTPMethod = .get
+}
+
 final class ViewController: UIViewController {
     lazy var productView = ProductView.init(frame: view.bounds)
     typealias DataSource = UICollectionViewDiffableDataSource<Section, ProductsDetail>
