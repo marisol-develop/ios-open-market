@@ -29,7 +29,7 @@ struct Products: Decodable {
     }
 }
 
-struct ProductsDetail: Decodable {
+struct ProductsDetail: Decodable, Hashable {
     let id: Int
     let vendorId: Int
     let name: String
