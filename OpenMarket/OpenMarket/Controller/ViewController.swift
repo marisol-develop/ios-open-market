@@ -65,7 +65,14 @@ final class ViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.titleView = productView.segmentedControl
         navigationItem.rightBarButtonItem = productView.plusButton
-        view.addSubview(productView.collectionView)
+        
+        NSLayoutConstraint.activate([
+            productView.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            productView.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            productView.collectionView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            productView.collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
+        
         productView.configureLayout()
     }
     
