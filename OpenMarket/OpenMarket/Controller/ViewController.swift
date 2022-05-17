@@ -84,12 +84,41 @@ final class ViewController: UIViewController {
                     return UICollectionViewCell()
                 }
                 
-                cell.productName.text = productDetail.name
-                cell.currency.text = productDetail.currency
-                cell.price.text = String(productDetail.price)
-                cell.bargainPrice.text = String(productDetail.bargainPrice)
-                cell.stock.text = String(productDetail.stock)
+                cell.configurePriceUI()
+                cell.configureProductUI()
+                cell.configureProductWithImageUI()
+                cell.configureAccessoryStackView()
                 
+//                self.item.forEach { product in
+//                    cell.currency.text = product.currency
+//                    cell.price.text = String(product.price)
+//                    cell.bargainPrice.text = String(product.bargainPrice)
+//                    cell.stock.text = String(product.stock)
+//
+//                    guard let data = try? Data(contentsOf: product.thumbnail) else {
+//                        return
+//                    }
+//                    cell.productImage.image = UIImage(data: data)
+//                }
+                
+                cell.productName.text = self.item[indexPath.row].name
+                cell.currency.text = self.item[indexPath.row].currency
+                cell.price.text = String(self.item[indexPath.row].price)
+                cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
+                cell.stock.text = String(self.item[indexPath.row].stock)
+                
+                guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
+                    return UICollectionViewCell()
+                }
+                
+                cell.productImage.image = UIImage(data: data)
+                
+//                cell.currency.text = "currency"
+//                cell.price.text = "price"
+//                cell.bargainPrice.text = "bargainPrice"
+//                cell.stock.text = "stock"
+//
+//                print("\(cell.currency.text)")
                 return cell
             })
         return dataSource
