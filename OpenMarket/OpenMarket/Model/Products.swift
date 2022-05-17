@@ -32,8 +32,8 @@ struct Products: Decodable {
 struct ProductsDetail: Decodable, Hashable {
     let id: Int
     let vendorId: Int
-    let name: String
-    let thumbnail: String
+    var name: String
+    let thumbnail: URL
     let currency: String
     let price: Int
     let bargainPrice: Int
