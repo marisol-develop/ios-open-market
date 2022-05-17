@@ -21,16 +21,43 @@ struct Product: APIable {
 }
 
 final class ViewController: UIViewController {
-    lazy var productView = ProductView.init(frame: view.bounds)
+    
     typealias DataSource = UICollectionViewDiffableDataSource<Section, ProductsDetail>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ProductsDetail>
-    private lazy var dataSource = makeDataSource()
     
-    var item: [ProductsDetail] = []
+    lazy var productView = ProductView.init(frame: view.bounds)
+    private lazy var dataSource = makeDataSource()
+    let networkManager = NetworkManager<Products>(session: URLSession.shared)
+    var item: [ProductsDetail] = []{
+        didSet {
+            DispatchQueue.main.async {
+                self.applySnapshot()
+            }
+        }
+    }
+    let product = Product()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        productView.collectionView.dataSource = self.dataSource
+        productView.collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.identifier)
+        
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+        DispatchQueue.global().async {
+            self.networkManager.execute(with: self.product) { result in
+                switch result {
+                case .success(let result):
+                    self.item = result.pages
+                    dispatchGroup.leave()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        
+        applySnapshot()
     }
     
     private func configureView() {
