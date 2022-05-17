@@ -16,7 +16,7 @@ final class CollectionViewCell: UICollectionViewCell {
     var bargainPrice: UILabel = UILabel()
     var stock: UILabel = UILabel()
     
-    private lazy var priceStackView = makeStackView(axis: .horizontal, alignment: .leading, distribution: .equalCentering, spacing: 5)
+    private lazy var priceStackView = makeStackView(axis: .horizontal, alignment: .leading, distribution: .fill, spacing: 5)
     private lazy var productStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var productWithImageStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var accessoryStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 5)
@@ -47,16 +47,16 @@ final class CollectionViewCell: UICollectionViewCell {
         productWithImageStackView.addArrangedSubview(productImage)
         productWithImageStackView.addArrangedSubview(productStackView)
         productWithImageStackView.addArrangedSubview(accessoryStackView)
-        self.addSubview(productWithImageStackView)
+        self.contentView.addSubview(productWithImageStackView)
         
         NSLayoutConstraint.activate([
             productImage.widthAnchor.constraint(equalToConstant: 50),
             productImage.heightAnchor.constraint(equalTo: productImage.widthAnchor),
             productImage.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            productWithImageStackView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5),
-            productWithImageStackView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
-            productWithImageStackView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 5),
-            productWithImageStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 5)
+            productWithImageStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 5),
+            productWithImageStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
+            productWithImageStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
+            productWithImageStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5)
         ])
     }
 
