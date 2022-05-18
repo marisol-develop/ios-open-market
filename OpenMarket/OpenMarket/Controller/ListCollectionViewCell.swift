@@ -55,6 +55,24 @@ final class ListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        productImage.image = UIImage(systemName: "swift")
+        productName.text = nil
+        currency.text = nil
+        price.text = nil
+        bargainPrice.text = nil
+        stock.text = nil
+        accessoryStackView.removeFromSuperview()
+
+        updateLayout()
+    }
+
+    func updateLayout() {
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+    }
+    
     func configureCell(_ productDetail: ProductsDetail) {
         if productDetail.discountedPrice != 0 {
             let currency = productDetail.currency

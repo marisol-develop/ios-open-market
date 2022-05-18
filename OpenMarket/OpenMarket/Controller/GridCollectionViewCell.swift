@@ -69,6 +69,23 @@ final class GridCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        productImage.image = nil
+        productName.text = nil
+        currency.text = nil
+        price.text = nil
+        bargainPrice.text = nil
+        stock.text = nil
+        
+        updateLayout()
+    }
+    
+    func updateLayout() {
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+    }
+    
     func configureCell(_ productDetail: ProductsDetail) {
         if productDetail.discountedPrice != 0 {
             let currency = productDetail.currency
