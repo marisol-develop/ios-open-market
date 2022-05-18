@@ -41,7 +41,14 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         configureView()
         productView.collectionView.dataSource = self.dataSource
-        productView.collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.identifier)
+        switch self.productView.segmentedControl.selectedSegmentIndex {
+        case 0:
+            productView.collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: ListCollectionViewCell.identifier)
+        case 1:
+            productView.collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: GridCollectionViewCell.identifier)
+        default:
+            productView.collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: ListCollectionViewCell.identifier)
+        }
         
         let dispatchGroup = DispatchGroup()
         dispatchGroup.enter()
@@ -80,28 +87,77 @@ final class ViewController: UIViewController {
         let dataSource = DataSource(
             collectionView: productView.collectionView,
             cellProvider: { (collectionView, indexPath, productDetail) -> UICollectionViewCell? in
-                guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else {
-                    return UICollectionViewCell()
+                
+                switch self.productView.segmentedControl.selectedSegmentIndex {
+                case 0:
+                    guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: ListCollectionViewCell.identifier, for: indexPath) as? ListCollectionViewCell else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productName.text = self.item[indexPath.row].name
+                    cell.currency.text = self.item[indexPath.row].currency
+                    cell.price.text = String(self.item[indexPath.row].price)
+                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
+                    cell.stock.text = String(self.item[indexPath.row].stock)
+                    
+                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productImage.image = UIImage(data: data)
+                    
+                    cell.configurePriceUI()
+                    cell.configureProductUI()
+                    cell.configureProductWithImageUI()
+                    cell.configureAccessoryStackView()
+                    
+                    return cell
+                case 1:
+                    guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: GridCollectionViewCell.identifier, for: indexPath) as? GridCollectionViewCell else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productName.text = self.item[indexPath.row].name
+                    cell.currency.text = self.item[indexPath.row].currency
+                    cell.price.text = String(self.item[indexPath.row].price)
+                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
+                    cell.stock.text = String(self.item[indexPath.row].stock)
+                    
+                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productImage.image = UIImage(data: data)
+                    
+                    cell.configurePriceUI()
+                    cell.configureProductUI()
+                    
+                    return cell
+                default:
+                    guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: ListCollectionViewCell.identifier, for: indexPath) as? ListCollectionViewCell else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productName.text = self.item[indexPath.row].name
+                    cell.currency.text = self.item[indexPath.row].currency
+                    cell.price.text = String(self.item[indexPath.row].price)
+                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
+                    cell.stock.text = String(self.item[indexPath.row].stock)
+                    
+                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
+                        return UICollectionViewCell()
+                    }
+                    
+                    cell.productImage.image = UIImage(data: data)
+                    
+                    cell.configurePriceUI()
+                    cell.configureProductUI()
+                    cell.configureProductWithImageUI()
+                    cell.configureAccessoryStackView()
+                    
+                    return cell
                 }
                 
-                cell.productName.text = self.item[indexPath.row].name
-                cell.currency.text = self.item[indexPath.row].currency
-                cell.price.text = String(self.item[indexPath.row].price)
-                cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
-                cell.stock.text = String(self.item[indexPath.row].stock)
-                
-                guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
-                    return UICollectionViewCell()
-                }
-                
-                cell.productImage.image = UIImage(data: data)
-                
-                cell.configurePriceUI()
-                cell.configureProductUI()
-                cell.configureProductWithImageUI()
-                cell.configureAccessoryStackView()
-                
-                return cell
             })
         return dataSource
     }
