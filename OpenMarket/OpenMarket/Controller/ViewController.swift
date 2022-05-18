@@ -21,13 +21,13 @@ struct Product: APIable {
 }
 
 final class ViewController: UIViewController {
-    
     typealias DataSource = UICollectionViewDiffableDataSource<Section, ProductsDetail>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ProductsDetail>
     
     lazy var productView = ProductView.init(frame: view.bounds)
     private lazy var dataSource = makeDataSource()
     let networkManager = NetworkManager<Products>(session: URLSession.shared)
+    let product = Product()
     var item: [ProductsDetail] = []{
         didSet {
             DispatchQueue.main.async {
@@ -35,20 +35,13 @@ final class ViewController: UIViewController {
             }
         }
     }
-    let product = Product()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         productView.collectionView.dataSource = self.dataSource
-        switch self.productView.segmentedControl.selectedSegmentIndex {
-        case 0:
-            productView.collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: ListCollectionViewCell.identifier)
-        case 1:
-            productView.collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: GridCollectionViewCell.identifier)
-        default:
-            productView.collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: ListCollectionViewCell.identifier)
-        }
+        productView.collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: ListCollectionViewCell.identifier)
+        productView.collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: GridCollectionViewCell.identifier)
         
         let dispatchGroup = DispatchGroup()
         dispatchGroup.enter()
@@ -88,39 +81,24 @@ final class ViewController: UIViewController {
             collectionView: productView.collectionView,
             cellProvider: { (collectionView, indexPath, productDetail) -> UICollectionViewCell? in
                 
-                switch self.productView.segmentedControl.selectedSegmentIndex {
-                case 0:
-                    guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: ListCollectionViewCell.identifier, for: indexPath) as? ListCollectionViewCell else {
-                        return UICollectionViewCell()
-                    }
-                    
-                    cell.productName.text = self.item[indexPath.row].name
-                    cell.currency.text = self.item[indexPath.row].currency
-                    cell.price.text = String(self.item[indexPath.row].price)
-                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
-                    cell.stock.text = String(self.item[indexPath.row].stock)
-                    
-                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
-                        return UICollectionViewCell()
-                    }
-                    
-                    cell.productImage.image = UIImage(data: data)
-                    
-                    cell.configurePriceUI()
-                    cell.configureProductUI()
-                    cell.configureProductWithImageUI()
-                    cell.configureAccessoryStackView()
-                    
-                    return cell
-                case 1:
+                if self.productView.segmentedControl.selectedSegmentIndex == 1 {
                     guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: GridCollectionViewCell.identifier, for: indexPath) as? GridCollectionViewCell else {
                         return UICollectionViewCell()
                     }
                     
+                    if self.item[indexPath.row].discountedPrice != 0 {
+                        let currency = self.item[indexPath.row].currency
+                        let price = String(self.item[indexPath.row].price)
+                        let bargain = String(self.item[indexPath.row].bargainPrice)
+                        
+                        cell.originalPrice.text = currency + price
+                        cell.makeBargainPrice(price: cell.originalPrice)
+                        cell.discountedPrice.text = currency + bargain
+                    }
+                    
                     cell.productName.text = self.item[indexPath.row].name
                     cell.currency.text = self.item[indexPath.row].currency
                     cell.price.text = String(self.item[indexPath.row].price)
-                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
                     cell.stock.text = String(self.item[indexPath.row].stock)
                     
                     guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
@@ -129,20 +107,34 @@ final class ViewController: UIViewController {
                     
                     cell.productImage.image = UIImage(data: data)
                     
-                    cell.configurePriceUI()
                     cell.configureProductUI()
                     
                     return cell
-                default:
+                } else {
                     guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: ListCollectionViewCell.identifier, for: indexPath) as? ListCollectionViewCell else {
                         return UICollectionViewCell()
+                    }
+                    
+                    if self.item[indexPath.row].discountedPrice != 0 {
+                        let currency = self.item[indexPath.row].currency
+                        let price = String(self.item[indexPath.row].price)
+                        let bargain = String(self.item[indexPath.row].bargainPrice)
+                        
+                        cell.originalPrice.text = currency + price
+                        cell.makeBargainPrice(price: cell.originalPrice)
+                        cell.discountedPrice.text = currency + bargain
                     }
                     
                     cell.productName.text = self.item[indexPath.row].name
                     cell.currency.text = self.item[indexPath.row].currency
                     cell.price.text = String(self.item[indexPath.row].price)
-                    cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
                     cell.stock.text = String(self.item[indexPath.row].stock)
+                    
+                    if self.item[indexPath.row].discountedPrice != 0 {
+                        cell.currency.text = self.item[indexPath.row].currency
+                        cell.price.text = String(self.item[indexPath.row].price)
+                        cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
+                    }
                     
                     guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
                         return UICollectionViewCell()
@@ -157,7 +149,6 @@ final class ViewController: UIViewController {
                     
                     return cell
                 }
-                
             })
         return dataSource
     }
