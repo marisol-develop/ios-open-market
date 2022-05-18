@@ -20,7 +20,23 @@ final class ListCollectionViewCell: UICollectionViewCell {
     private lazy var productStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var productWithImageStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var accessoryStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 5)
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.contentView.layer.addSeparator()
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var separator: UIView = {
+       let view = UIView()
+        view.backgroundColor = .systemGray2
+
+        return view
+    }()
+
     lazy var originalPrice: UILabel = {
         let label = UILabel()
        
