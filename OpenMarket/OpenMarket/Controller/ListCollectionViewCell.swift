@@ -36,6 +36,15 @@ final class ListCollectionViewCell: UICollectionViewCell {
 
         return view
     }()
+    
+    func formatNumber(price: Int) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        guard let result = numberFormatter.string(from: NSNumber(value: price)) else {
+            return ""
+        }
+        return result
+    }
 
     lazy var originalPrice: UILabel = {
         let label = UILabel()

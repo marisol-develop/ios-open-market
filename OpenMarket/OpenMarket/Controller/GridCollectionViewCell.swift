@@ -19,6 +19,15 @@ final class GridCollectionViewCell: UICollectionViewCell {
     private lazy var productStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .equalSpacing, spacing: 5)
     private lazy var priceStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 3)
     
+    func formatNumber(price: Int) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        guard let result = numberFormatter.string(from: NSNumber(value: price)) else {
+            return ""
+        }
+        return result
+    }
+    
     lazy var originalPrice: UILabel = {
         let label = UILabel()
        
