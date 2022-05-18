@@ -22,7 +22,11 @@ final class ProductView: UIView {
         let segmentedControl = UISegmentedControl(items: ["LIST", "GRID"])
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        segmentedControl.backgroundColor = .systemBlue
+        segmentedControl.selectedSegmentTintColor = .systemBlue
+        
+        segmentedControl.layer.borderWidth = 1
+        segmentedControl.layer.borderColor = UIColor.systemBlue.cgColor
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: UIControl.State.selected)
        
         return segmentedControl
     }()
