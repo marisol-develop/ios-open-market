@@ -15,20 +15,64 @@ final class GridCollectionViewCell: UICollectionViewCell {
     var price: UILabel = UILabel()
     var bargainPrice: UILabel = UILabel()
     var stock: UILabel = UILabel()
+
+    private lazy var productStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 5)
     
-    private lazy var priceStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 3)
-    private lazy var productStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 5)
+    lazy var originalPrice: UILabel = {
+        let label = UILabel()
+       
+        guard let currency = currency.text else {
+            return UILabel()
+        }
+        
+        guard let price = price.text else {
+            return UILabel()
+        }
+        
+        label.text = "\(currency) \(price)"
+        label.textColor = .systemGray2
+                
+        return label
+    }()
     
+    lazy var discountedPrice: UILabel = {
+        let label = UILabel()
+       
+        guard let currency = currency.text else {
+            return UILabel()
+        }
+        guard let price = bargainPrice.text else {
+            return UILabel()
+        }
+        
+        label.text = "\(currency) \(price)"
+        label.textColor = .systemGray2
+        
+        return label
+    }()
+
     private lazy var stockName: UILabel = {
         let label = UILabel()
-        if stock.text == "0" {
+        guard let stock = stock.text else {
+            return UILabel()
+        }
+        
+        if stock == "0" {
             label.text = "품절"
+            label.textColor = .systemYellow
+            
         } else {
             label.text = "잔여수량: \(stock)"
+            label.textColor = .systemGray2
         }
         
         return label
     }()
+    
+    func makeBargainPrice(price: UILabel) {
+        price.textColor = .systemRed
+        price.attributedText = price.text?.strikeThrough()
+    }
     
     private func makeStackView(axis: NSLayoutConstraint.Axis, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution, spacing: CGFloat) -> UIStackView {
         let stackView = UIStackView()
@@ -42,15 +86,11 @@ final class GridCollectionViewCell: UICollectionViewCell {
         return stackView
     }
     
-    func configurePriceUI() {
-        priceStackView.addArrangedSubview(currency)
-        priceStackView.addArrangedSubview(price)
-    }
-    
     func configureProductUI() {
         productStackView.addArrangedSubview(productImage)
         productStackView.addArrangedSubview(productName)
-        productStackView.addArrangedSubview(priceStackView)
+        productStackView.addArrangedSubview(originalPrice)
+        productStackView.addArrangedSubview(discountedPrice)
         productStackView.addArrangedSubview(stockName)
         self.contentView.addSubview(productStackView)
         
