@@ -66,11 +66,6 @@ final class ViewController: UIViewController {
         navigationItem.titleView = productView.segmentedControl
         navigationItem.rightBarButtonItem = productView.plusButton
         
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.backgroundColor = .systemGray6
-        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        
         NSLayoutConstraint.activate([
             productView.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             productView.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
