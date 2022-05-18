@@ -39,7 +39,6 @@ final class GridCollectionViewCell: UICollectionViewCell {
             return UILabel()
         }
         
-        label.text = "\(currency) \(price)"
         label.textColor = .systemGray2
                 
         return label
@@ -55,7 +54,6 @@ final class GridCollectionViewCell: UICollectionViewCell {
             return UILabel()
         }
         
-        label.text = "\(currency) \(price)"
         label.textColor = .systemGray2
         
         return label
@@ -111,18 +109,23 @@ final class GridCollectionViewCell: UICollectionViewCell {
     func configureCell(_ productDetail: ProductsDetail) {
         if productDetail.discountedPrice != 0 {
             let currency = productDetail.currency
-            let price = String(productDetail.price)
-            let bargain = String(productDetail.bargainPrice)
-            
-            originalPrice.text = currency + price
-            makeBargainPrice(price: originalPrice)
-            discountedPrice.text = currency + bargain
-        }
+            let price = formatNumber(price: productDetail.price)
+            let bargain = formatNumber(price: productDetail.bargainPrice)
         
+            originalPrice.text = "\(currency) \(price)"
+            makeBargainPrice(price: originalPrice)
+            discountedPrice.text = "\(currency) \(bargain)"
+            discountedPrice.textColor = .systemGray2
+        } else {
+            let currency = productDetail.currency
+            let formattedPrice = formatNumber(price: productDetail.price)
+            let price = formattedPrice
+            
+            originalPrice.text = "\(currency) \(price)"
+            originalPrice.textColor = .systemGray2
+        }
         productName.font  = UIFont.boldSystemFont(ofSize: 20)
         productName.text = productDetail.name
-        currency.text = productDetail.currency
-        price.text = String(productDetail.price)
         stock.text = String(productDetail.stock)
         
         guard let data = try? Data(contentsOf: productDetail.thumbnail) else {

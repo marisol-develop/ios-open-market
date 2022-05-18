@@ -101,8 +101,8 @@ final class ListCollectionViewCell: UICollectionViewCell {
     func configureCell(_ productDetail: ProductsDetail) {
         if productDetail.discountedPrice != 0 {
             let currency = productDetail.currency
-            let price = String(productDetail.price)
-            let bargain = String(productDetail.bargainPrice)
+            let price = formatNumber(price: productDetail.price)
+            let bargain = formatNumber(price: productDetail.bargainPrice)
             
             originalPrice.text = currency + price
             makeBargainPrice(price: originalPrice)
@@ -112,7 +112,8 @@ final class ListCollectionViewCell: UICollectionViewCell {
         productName.font  = UIFont.boldSystemFont(ofSize: 20)
         productName.text = productDetail.name
         currency.text = productDetail.currency
-        price.text = String(productDetail.price)
+        let formattedPrice = formatNumber(price: productDetail.price)
+        price.text = formattedPrice
         stock.text = String(productDetail.stock)
         
         guard let data = try? Data(contentsOf: productDetail.thumbnail) else {

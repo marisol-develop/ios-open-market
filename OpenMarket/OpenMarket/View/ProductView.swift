@@ -83,6 +83,10 @@ final class ProductView: UIView {
             self.collectionView.topAnchor.constraint(equalTo: self.topAnchor),
             self.collectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            self.segmentedControl.widthAnchor.constraint(equalToConstant: 170)
+        ])
     }
     
     @objc private func switchSegment(segmentControl: UISegmentedControl) {
