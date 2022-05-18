@@ -85,72 +85,26 @@ final class ViewController: UIViewController {
         let dataSource = DataSource(
             collectionView: productView.collectionView,
             cellProvider: { (collectionView, indexPath, productDetail) -> UICollectionViewCell? in
-                
                 if self.productView.segmentedControl.selectedSegmentIndex == 1 {
                     guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: GridCollectionViewCell.identifier, for: indexPath) as? GridCollectionViewCell else {
                         return UICollectionViewCell()
                     }
-                    
-                    if self.item[indexPath.row].discountedPrice != 0 {
-                        let currency = self.item[indexPath.row].currency
-                        let price = String(self.item[indexPath.row].price)
-                        let bargain = String(self.item[indexPath.row].bargainPrice)
-                        
-                        cell.originalPrice.text = currency + price
-                        cell.makeBargainPrice(price: cell.originalPrice)
-                        cell.discountedPrice.text = currency + bargain
+                    DispatchQueue.main.async {
+                        if self.productView.collectionView.indexPath(for: cell) == indexPath {
+                            cell.configureCell(productDetail)
+                        }
                     }
-                    
-                    cell.productName.text = self.item[indexPath.row].name
-                    cell.currency.text = self.item[indexPath.row].currency
-                    cell.price.text = String(self.item[indexPath.row].price)
-                    cell.stock.text = String(self.item[indexPath.row].stock)
-                    
-                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
-                        return UICollectionViewCell()
-                    }
-                    
-                    cell.productImage.image = UIImage(data: data)
-                    
-                    cell.configureProductUI()
-                    
                     return cell
                 } else {
                     guard let cell = self.productView.collectionView.dequeueReusableCell(withReuseIdentifier: ListCollectionViewCell.identifier, for: indexPath) as? ListCollectionViewCell else {
                         return UICollectionViewCell()
                     }
                     
-                    if self.item[indexPath.row].discountedPrice != 0 {
-                        let currency = self.item[indexPath.row].currency
-                        let price = String(self.item[indexPath.row].price)
-                        let bargain = String(self.item[indexPath.row].bargainPrice)
-                        
-                        cell.originalPrice.text = currency + price
-                        cell.makeBargainPrice(price: cell.originalPrice)
-                        cell.discountedPrice.text = currency + bargain
+                    DispatchQueue.main.async {
+                        if self.productView.collectionView.indexPath(for: cell) == indexPath {
+                            cell.configureCell(productDetail)
+                        }
                     }
-                    
-                    cell.productName.text = self.item[indexPath.row].name
-                    cell.currency.text = self.item[indexPath.row].currency
-                    cell.price.text = String(self.item[indexPath.row].price)
-                    cell.stock.text = String(self.item[indexPath.row].stock)
-                    
-                    if self.item[indexPath.row].discountedPrice != 0 {
-                        cell.currency.text = self.item[indexPath.row].currency
-                        cell.price.text = String(self.item[indexPath.row].price)
-                        cell.bargainPrice.text = String(self.item[indexPath.row].bargainPrice)
-                    }
-                    
-                    guard let data = try? Data(contentsOf: self.item[indexPath.row].thumbnail) else {
-                        return UICollectionViewCell()
-                    }
-                    
-                    cell.productImage.image = UIImage(data: data)
-                    
-                    cell.configurePriceUI()
-                    cell.configureProductUI()
-                    cell.configureProductWithImageUI()
-                    cell.configureAccessoryStackView()
                     
                     return cell
                 }

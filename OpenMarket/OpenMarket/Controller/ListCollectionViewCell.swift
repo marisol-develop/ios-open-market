@@ -55,6 +55,35 @@ final class ListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    func configureCell(_ productDetail: ProductsDetail) {
+        if productDetail.discountedPrice != 0 {
+            let currency = productDetail.currency
+            let price = String(productDetail.price)
+            let bargain = String(productDetail.bargainPrice)
+            
+            originalPrice.text = currency + price
+            makeBargainPrice(price: originalPrice)
+            discountedPrice.text = currency + bargain
+        }
+        
+        productName.font  = UIFont.boldSystemFont(ofSize: 20)
+        productName.text = productDetail.name
+        currency.text = productDetail.currency
+        price.text = String(productDetail.price)
+        stock.text = String(productDetail.stock)
+        
+        guard let data = try? Data(contentsOf: productDetail.thumbnail) else {
+            return
+        }
+        
+        productImage.image = UIImage(data: data)
+        
+        configurePriceUI()
+        configureProductUI()
+        configureAccessoryStackView()
+        configureProductWithImageUI()
+    }
+    
     private func makeStackView(axis: NSLayoutConstraint.Axis, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution, spacing: CGFloat) -> UIStackView {
         let stackView = UIStackView()
         
