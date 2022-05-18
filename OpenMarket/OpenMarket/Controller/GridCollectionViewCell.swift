@@ -16,7 +16,8 @@ final class GridCollectionViewCell: UICollectionViewCell {
     var bargainPrice: UILabel = UILabel()
     var stock: UILabel = UILabel()
 
-    private lazy var productStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 5)
+    private lazy var productStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .equalSpacing, spacing: 5)
+    private lazy var priceStackView = makeStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 3)
     
     lazy var originalPrice: UILabel = {
         let label = UILabel()
@@ -133,22 +134,26 @@ final class GridCollectionViewCell: UICollectionViewCell {
     func configureProductUI() {
         productStackView.addArrangedSubview(productImage)
         productStackView.addArrangedSubview(productName)
-        productStackView.addArrangedSubview(originalPrice)
-        productStackView.addArrangedSubview(discountedPrice)
+        productStackView.addArrangedSubview(priceStackView)
         productStackView.addArrangedSubview(stockName)
         self.contentView.addSubview(productStackView)
         
         NSLayoutConstraint.activate([
-            productStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
-            productStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
-            productStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
-            productStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5)
+            productStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            productStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
+            productStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20),
+            productStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ])
         
         NSLayoutConstraint.activate([
             productImage.widthAnchor.constraint(equalToConstant: 100),
             productImage.heightAnchor.constraint(equalTo: productImage.widthAnchor)
         ])
+    }
+    
+    func configurePriceUI() {
+        priceStackView.addArrangedSubview(originalPrice)
+        priceStackView.addArrangedSubview(discountedPrice)
     }
 }
 
