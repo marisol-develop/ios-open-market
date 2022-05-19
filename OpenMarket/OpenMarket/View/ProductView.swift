@@ -23,7 +23,6 @@ final class ProductView: UIView {
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentTintColor = .systemBlue
-        
         segmentedControl.layer.borderWidth = 1
         segmentedControl.layer.borderColor = UIColor.systemBlue.cgColor
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: UIControl.State.selected)
@@ -40,10 +39,10 @@ final class ProductView: UIView {
     }()
     
     lazy var collectionView: UICollectionView = {
-        let view = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
-        view.translatesAutoresizingMaskIntoConstraints = false
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        return view
+        return collectionView
     }()
     
     lazy var listLayout: UICollectionViewCompositionalLayout = {
@@ -76,6 +75,22 @@ final class ProductView: UIView {
         return layout
     }()
     
+    @objc private func switchSegment(segmentControl: UISegmentedControl) {
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            collectionView.collectionViewLayout = listLayout
+        case 1:
+            collectionView.collectionViewLayout = gridLayout
+        default:
+            collectionView.collectionViewLayout = listLayout
+        }
+        
+        collectionView.reloadData()
+    }
+}
+
+// MARK: - Layout
+extension ProductView {
     func configureLayout() {
         NSLayoutConstraint.activate([
             self.collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
@@ -87,17 +102,5 @@ final class ProductView: UIView {
         NSLayoutConstraint.activate([
             self.segmentedControl.widthAnchor.constraint(equalToConstant: 170)
         ])
-    }
-    
-    @objc private func switchSegment(segmentControl: UISegmentedControl) {
-        switch segmentControl.selectedSegmentIndex {
-        case 0:
-            collectionView.collectionViewLayout = listLayout
-        case 1:
-            collectionView.collectionViewLayout = gridLayout
-        default:
-            collectionView.collectionViewLayout = listLayout
-        }
-        collectionView.reloadData()
     }
 }
