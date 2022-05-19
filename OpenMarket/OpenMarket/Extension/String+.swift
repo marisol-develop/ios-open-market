@@ -9,12 +9,12 @@ import UIKit
 
 extension String {
     func strikeThrough() -> NSAttributedString {
-        let attributeString = NSMutableAttributedString(string: self)
-        attributeString.addAttribute(
+        let attributedString = NSMutableAttributedString(string: self)
+        attributedString.addAttribute(
             NSAttributedString.Key.strikethroughStyle,
             value: NSUnderlineStyle.single.rawValue,
-            range: NSMakeRange(0,attributeString.length)
+            range: NSMakeRange(0, attributedString.length)
         )
-        return attributeString
+        return attributedString
     }
 }

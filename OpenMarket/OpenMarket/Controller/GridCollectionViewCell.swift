@@ -105,10 +105,10 @@ final class GridCollectionViewCell: UICollectionViewCell {
 extension GridCollectionViewCell {
     private func setDiscountedPriceUI(_ products: Products) {
         let currency = products.currency
-        let price = formatNumber(price: products.price)
+        let formattedPrice = formatNumber(price: products.price)
         let bargain = formatNumber(price: products.bargainPrice)
         
-        originalPrice.text = currency + price
+        originalPrice.text = currency + formattedPrice
         strikeThrough(price: originalPrice)
         discountedPrice.text = currency + bargain
         discountedPrice.textColor = .systemGray2
@@ -116,11 +116,9 @@ extension GridCollectionViewCell {
     
     private func setOriginalPriceUI(_ products: Products) {
         let formattedPrice = formatNumber(price: products.price)
-        
         let currency = products.currency
-        let price = formattedPrice
         
-        originalPrice.text = "\(currency) \(price)"
+        originalPrice.text = "\(currency) \(formattedPrice)"
         originalPrice.textColor = .systemGray2
     }
     

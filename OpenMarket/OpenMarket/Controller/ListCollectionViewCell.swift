@@ -18,9 +18,9 @@ final class ListCollectionViewCell: UICollectionViewCell {
     
     private lazy var priceStackView = makeStackView(axis: .horizontal, alignment: .leading, distribution: .fillEqually, spacing: 5)
     private lazy var productStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 5)
-    private lazy var productWithImageStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 5)
+    private lazy var entireProductStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var accessoryStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 5)
-
+    
     private var separator: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray2
@@ -99,10 +99,10 @@ final class ListCollectionViewCell: UICollectionViewCell {
 extension ListCollectionViewCell {
     private func setDiscountedPriceUI(_ products: Products) {
         let currency = products.currency
-        let price = formatNumber(price: products.price)
+        let formattedPrice = formatNumber(price: products.price)
         let bargain = formatNumber(price: products.bargainPrice)
         
-        originalPrice.text = currency + price
+        originalPrice.text = currency + formattedPrice
         strikeThrough(price: originalPrice)
         discountedPrice.text = currency + bargain
     }
@@ -162,18 +162,18 @@ extension ListCollectionViewCell {
     }
     
     private func configureEntireProductUI() {
-        productWithImageStackView.addArrangedSubview(productImage)
-        productWithImageStackView.addArrangedSubview(productStackView)
-        productWithImageStackView.addArrangedSubview(accessoryStackView)
-        self.contentView.addSubview(productWithImageStackView)
+        entireProductStackView.addArrangedSubview(productImage)
+        entireProductStackView.addArrangedSubview(productStackView)
+        entireProductStackView.addArrangedSubview(accessoryStackView)
+        self.contentView.addSubview(entireProductStackView)
         
         NSLayoutConstraint.activate([
             productImage.widthAnchor.constraint(equalToConstant: 50),
             productImage.heightAnchor.constraint(equalTo: productImage.widthAnchor),
-            productWithImageStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 5),
-            productWithImageStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
-            productWithImageStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
-            productWithImageStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5)
+            entireProductStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 5),
+            entireProductStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
+            entireProductStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
+            entireProductStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5)
         ])
     }
 }
