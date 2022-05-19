@@ -80,7 +80,7 @@ extension MainViewController {
     private func executeAPI() {
         let dispatchGroup = DispatchGroup()
         dispatchGroup.enter()
-        DispatchQueue.global().async {
+        DispatchQueue.global().async(group: dispatchGroup) {
             self.networkManager.execute(with: self.product) { result in
                 switch result {
                 case .success(let result):
