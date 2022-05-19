@@ -106,7 +106,7 @@ final class GridCollectionViewCell: UICollectionViewCell {
         self.layoutIfNeeded()
     }
     
-    func configureCell(_ productDetail: ProductsDetail) {
+    func configureCell(_ productDetail: Products) {
         if productDetail.discountedPrice != 0 {
             let currency = productDetail.currency
             let price = formatNumber(price: productDetail.price)

@@ -21,14 +21,14 @@ private struct Product: APIable {
 }
 
 final class MainViewController: UIViewController {
-    fileprivate typealias DataSource = UICollectionViewDiffableDataSource<Section, ProductsDetail>
-    fileprivate typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ProductsDetail>
+    fileprivate typealias DataSource = UICollectionViewDiffableDataSource<Section, Products>
+    fileprivate typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Products>
     
     private lazy var dataSource = makeDataSource()
     private let product = Product()
     private lazy var productView = ProductView.init(frame: view.bounds)
-    private let networkManager = NetworkManager<Products>(session: URLSession.shared)
-    private lazy var item: [ProductsDetail] = [] {
+    private let networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
+    private lazy var item: [Products] = [] {
         didSet {
             DispatchQueue.main.async {
                 self.applySnapshot()
