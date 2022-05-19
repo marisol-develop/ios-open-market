@@ -21,13 +21,6 @@ final class ListCollectionViewCell: UICollectionViewCell {
     private lazy var entireProductStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 5)
     private lazy var accessoryStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 5)
     
-    private var separator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemGray2
-        
-        return view
-    }()
-    
     private lazy var originalPrice: UILabel = {
         let label = UILabel()
         
