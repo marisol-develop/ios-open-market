@@ -7,58 +7,57 @@
 
 import UIKit
 
-final class RegistrationViewController: UIViewController {
-    private lazy var registrationViewCell = RegistrationViewCell(frame: view.bounds)
-    private lazy var productDetailView = ProductDetailView(frame: view.bounds)
-    
-    let collectionView: UICollectionView = {
+class RegistrationViewController: UIViewController {
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemRed
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        layout.scrollDirection = .horizontal
+        let collectionView = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
         
         return collectionView
     }()
     
+    let productDetailView = ProductDetailView()
+
     override func viewDidLoad() {
-        configureNavigation(title: "상품등록")
-        collectionView.register(RegistrationViewCell.self, forCellWithReuseIdentifier: RegistrationViewCell.identifier)
+        super.viewDidLoad()
+        self.view.addSubview(collectionView)
+        self.view.addSubview(productDetailView)
+        productDetailView.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
-        configureView()
+        collectionView.register(RegistrationViewCell.self, forCellWithReuseIdentifier: RegistrationViewCell.identifier)
+        setLayout()
     }
     
-    private func configureView() {
-        self.view = productDetailView
-        self.view.addSubview(collectionView)
-//        self.view.addSubview(productDetailView)
-        self.view.backgroundColor = UIColor.white
+    func setLayout() {
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        productDetailView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            self.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            self.collectionView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            self.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            self.collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -300)
-        ])
-        
-        NSLayoutConstraint.activate([
-            productDetailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            productDetailView.topAnchor.constraint(equalTo: self.collectionView.bottomAnchor),
-            productDetailView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            productDetailView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 160),
+            
+            productDetailView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            productDetailView.topAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            productDetailView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            productDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
 
 extension RegistrationViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RegistrationViewCell.identifier, for: indexPath) as? RegistrationViewCell else { return UICollectionViewCell() }
-        
-        cell.makeProductImage()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RegistrationViewCell.identifier, for: indexPath) as? RegistrationViewCell else {
+            return UICollectionViewCell()
+        }
         
         return cell
     }
@@ -66,7 +65,7 @@ extension RegistrationViewController: UICollectionViewDataSource {
 
 extension RegistrationViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 50, height: 50)
+        return CGSize(width: 150, height: 150)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -75,17 +74,5 @@ extension RegistrationViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 5.0
-    }
-}
-
-extension RegistrationViewController {
-    func configureNavigation(title: String) {
-        self.title = title
-        
-        let leftNavigationButton = UIBarButtonItem(title: "Cancel", style: .plain, target: nil, action: nil)
-        let rightNavigationButton = UIBarButtonItem(title: "Done", style: .done, target: nil, action: nil)
-        
-        self.navigationItem.leftBarButtonItem = leftNavigationButton
-        self.navigationItem.rightBarButtonItem = rightNavigationButton
     }
 }
