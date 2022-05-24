@@ -112,6 +112,8 @@
 			children = (
 				C70FB10525BEF61D00C9924E /* LaunchScreen.storyboard */,
 				B32C2BD22832591300381A0E /* ProductListView.swift */,
+				B32C2BF628327B4000381A0E /* ListCollectionViewCell.swift */,
+				B3F7D96C28348AA00079ED84 /* GridCollectionViewCell.swift */,
 				6447D2C22838DE8F005570BC /* LayoutType.swift */,
 			);
 			path = View;
@@ -121,8 +123,6 @@
 			isa = PBXGroup;
 			children = (
 				C70FB0FE25BEF61C00C9924E /* MainViewController.swift */,
-				B32C2BF628327B4000381A0E /* ListCollectionViewCell.swift */,
-				B3F7D96C28348AA00079ED84 /* GridCollectionViewCell.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
