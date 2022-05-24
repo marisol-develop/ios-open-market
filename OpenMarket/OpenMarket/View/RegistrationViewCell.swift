@@ -9,15 +9,21 @@ import UIKit
 
 final class RegistrationViewCell: UICollectionViewCell {
     static let identifier = "RegistrationViewCell"
+    let imageView = UIImageView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        contentView.addSubview(imageView)
+        makeProductImage()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func makeProductImage() {
-        let image = UIImageView()
-        
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.isUserInteractionEnabled = true
-        NSLayoutConstraint.activate([
-            image.widthAnchor.constraint(equalToConstant: 100),
-            image.heightAnchor.constraint(equalToConstant: 100)
-        ])
+        imageView.image = UIImage(systemName: "swift")
+        imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)
+        imageView.isUserInteractionEnabled = true
     }
 }
