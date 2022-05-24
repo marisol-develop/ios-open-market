@@ -8,6 +8,8 @@
 import UIKit
 
 class RegistrationViewController: UIViewController {
+    let rightNavigationButton = UIBarButtonItem(title: "Done", style: .done, target: nil, action: nil)
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -28,6 +30,10 @@ class RegistrationViewController: UIViewController {
         collectionView.delegate = self
         collectionView.register(RegistrationViewCell.self, forCellWithReuseIdentifier: RegistrationViewCell.identifier)
         setLayout()
+        self.navigationController?.navigationBar.topItem?.title = "Cancel"
+        self.title = "상품등록"
+        self.navigationItem.rightBarButtonItem = rightNavigationButton
+        rightNavigationButton.isEnabled = false
     }
     
     func setLayout() {
