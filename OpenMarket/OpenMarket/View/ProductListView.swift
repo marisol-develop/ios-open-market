@@ -45,14 +45,6 @@ final class ProductListView: UIView {
         return segmentedControl
     }()
     
-    lazy var plusButton: UIBarButtonItem = {
-        let plusButton = UIBarButtonItem()
-        
-        plusButton.title = "+"
-        
-        return plusButton
-    }()
-    
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layouts)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
