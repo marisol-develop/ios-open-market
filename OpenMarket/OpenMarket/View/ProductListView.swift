@@ -1,5 +1,5 @@
 //
-//  ProductView.swift
+//  ProductListView.swift
 //  OpenMarket
 //
 //  Created by Eddy, marisol on 2022/05/16.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ProductView: UIView {
+final class ProductListView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addSubview(collectionView)
@@ -79,7 +79,7 @@ final class ProductView: UIView {
 }
 
 // MARK: - Layout
-extension ProductView {
+extension ProductListView {
     func configureLayout() {
         NSLayoutConstraint.activate([
             self.collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),

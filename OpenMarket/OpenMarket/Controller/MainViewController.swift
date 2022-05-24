@@ -26,7 +26,7 @@ final class MainViewController: UIViewController {
     
     private lazy var dataSource = makeDataSource()
     private let product = Product()
-    private lazy var productView = ProductView.init(frame: view.bounds)
+    private lazy var productView = ProductListView.init(frame: view.bounds)
     private let networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
     private lazy var item: [Products] = [] {
         didSet {
