@@ -28,7 +28,7 @@ final class MainViewController: UIViewController {
     private let product = Product()
     private lazy var productView = ProductListView.init(frame: view.bounds)
     private lazy var plusButton: UIBarButtonItem = {
-        let plusButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(buttonDidTapped(_:)))
+        let plusButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusButtonDidTapped(_:)))
         
         return plusButton
     }()
@@ -71,7 +71,7 @@ extension MainViewController {
         productView.configureLayout()
     }
     
-    @objc private func buttonDidTapped(_ sender: UIBarButtonItem) {
+    @objc private func plusButtonDidTapped(_ sender: UIBarButtonItem) {
         let registrationViewController = RegistrationViewController()
         
         self.navigationController?.pushViewController(registrationViewController, animated: true)
