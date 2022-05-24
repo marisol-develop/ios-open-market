@@ -22,8 +22,12 @@ enum PlaceHolder: String {
 final class ProductDetailView: UIView {
     private lazy var entireStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 20)
     private lazy var productInfoStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 10)
-    private lazy var priceStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fillProportionally, spacing: 3)
-    
+    private lazy var priceStackView = makeStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 3)
+    let priceTextField = UITextField()
+    let segmentedContol = UISegmentedControl(items: [Currency.KRW.rawValue, Currency.USD.rawValue])
+    let productNameTextField = UITextField()
+    let discountedPriceTextField = UITextField()
+    let stockTextField = UITextField()
     let descriptionTextView: UITextView = {
         let textView = UITextView()
         
@@ -34,53 +38,57 @@ final class ProductDetailView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.addSubview(entireStackView)
+        configureView()
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configurePriceStackView() {
-        let textField = UITextField()
-        let segmentedContol = UISegmentedControl(items: [Currency.KRW.rawValue, Currency.USD.rawValue])
+    func configureView() {
+        self.addSubview(entireStackView)
+        entireStackView.addArrangedSubview([productInfoStackView, descriptionTextView])
+        productInfoStackView.addArrangedSubview([productNameTextField, priceStackView, discountedPriceTextField, stockTextField])
+        priceStackView.addArrangedSubview([priceTextField, segmentedContol])
         
-        textField.borderStyle = .roundedRect
-        textField.placeholder = PlaceHolder.price.rawValue
+        configureEntireStackViewLayout()
+        configureProductInfoStackView()
+        configurePriceStackView()
+    }
+    
+    func configurePriceStackView() {
+        priceTextField.borderStyle = .roundedRect
+        priceTextField.placeholder = PlaceHolder.price.rawValue
         segmentedContol.selectedSegmentIndex = 0
         
         segmentedContol.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
-        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        priceTextField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         segmentedContol.setContentCompressionResistancePriority(.required, for: .horizontal)
-        priceStackView.addArrangedSubview([textField, segmentedContol])
     }
     
     func configureProductInfoStackView() {
-        let productNameTextField = UITextField()
         productNameTextField.borderStyle = .roundedRect
         productNameTextField.placeholder = PlaceHolder.productName.rawValue
         
-        let discountedPriceTextField = UITextField()
         discountedPriceTextField.borderStyle = .roundedRect
         discountedPriceTextField.placeholder = PlaceHolder.discountedPrice.rawValue
         
-        let stockTextField = UITextField()
         stockTextField.borderStyle = .roundedRect
         stockTextField.placeholder = PlaceHolder.stock.rawValue
-        
-        productInfoStackView.addArrangedSubview([productNameTextField, priceStackView, discountedPriceTextField, stockTextField])
     }
     
-    func configureEntireStackView() {
-        entireStackView.addArrangedSubview([ productInfoStackView, descriptionTextView])
+    func configureEntireStackViewLayout() {
+        entireStackView.translatesAutoresizingMaskIntoConstraints = false
+        productInfoStackView.translatesAutoresizingMaskIntoConstraints = false
+        priceStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            self.entireStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
-            self.entireStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 10),
+            self.entireStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            self.entireStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             self.entireStackView.topAnchor.constraint(equalTo: self.topAnchor),
-            self.entireStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            self.entireStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.entireStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
         ])
     }
 }
