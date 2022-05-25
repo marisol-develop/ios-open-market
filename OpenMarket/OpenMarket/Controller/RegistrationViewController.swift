@@ -88,7 +88,8 @@ final class RegistrationViewController: UIViewController, UINavigationController
 
 extension RegistrationViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageArray.count + 1
+        let imageCount = imageArray.count + 1
+        return imageCount < 5 ? imageCount : 5
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
