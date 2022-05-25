@@ -103,6 +103,8 @@ extension RegistrationViewController: UICollectionViewDataSource {
         if imageArray.count > indexPath.row {
             let image = imageArray[indexPath.row]
             cell.button.setImage(image, for: .normal)
+            cell.button.backgroundColor = .clear
+            cell.button.setTitle(nil, for: .normal)
         }
         
         return cell
@@ -129,9 +131,15 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
             guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
                 return
             }
-                        
-            self.imageArray.append(image)
-            print(self.imageArray)
+            
+            let imageCapacity = image.checkImageCapacity()
+            
+            if imageCapacity > 300 {
+                let resizedImage = image.resize(newWidth: 80)
+                self.imageArray.append(resizedImage)
+            } else {
+                self.imageArray.append(image)
+            }
             
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -175,4 +183,30 @@ extension RegistrationViewController: UICollectionViewDelegate {
 
 extension RegistrationViewController: UINavigationControllerDelegate {
     
+}
+
+extension UIImage {
+    func resize(newWidth: CGFloat) -> UIImage {
+        let scale = newWidth / self.size.width
+        let newHeight = self.size.height * scale
+
+        let size = CGSize(width: newWidth, height: newHeight)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let renderedImage = renderer.image { context in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+        
+        return renderedImage
+    }
+    
+    func checkImageCapacity() -> Double {
+        var capacity: Double = 0.0
+        guard let data = self.pngData() else {
+            return 0.0
+        }
+        
+        capacity = Double(data.count) / 1024
+        
+        return capacity
+    }
 }
