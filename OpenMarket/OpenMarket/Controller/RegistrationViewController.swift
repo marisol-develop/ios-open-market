@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RegistrationViewController: UIViewController {
+final class RegistrationViewController: UIViewController, UINavigationControllerDelegate {
     let imagePicker = UIImagePickerController()
     var imageArray = [UIImage]()
     let rightNavigationButton = UIBarButtonItem(title: "Done", style: .done, target: nil, action: nil)
@@ -179,10 +179,6 @@ extension RegistrationViewController: UICollectionViewDelegate {
         
         self.present(actionSheet, animated: true, completion: nil)
     }
-}
-
-extension RegistrationViewController: UINavigationControllerDelegate {
-    
 }
 
 extension UIImage {
