@@ -21,12 +21,19 @@ final class RegistrationViewController: UIViewController, UINavigationController
         return collectionView
     }()
     
+    let entireScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        
+        return scrollView
+    }()
+    
     let productDetailView = ProductDetailView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(collectionView)
-        self.view.addSubview(productDetailView)
+        self.view.addSubview(entireScrollView)
+        entireScrollView.addSubview(collectionView)
+        entireScrollView.addSubview(productDetailView)
         self.view.backgroundColor = .white
         productDetailView.backgroundColor = .white
         collectionView.dataSource = self
@@ -43,17 +50,26 @@ final class RegistrationViewController: UIViewController, UINavigationController
     func setLayout() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         productDetailView.translatesAutoresizingMaskIntoConstraints = false
+        entireScrollView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            entireScrollView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            entireScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            entireScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            entireScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            entireScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            collectionView.widthAnchor.constraint(equalTo: entireScrollView.widthAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: entireScrollView.safeAreaLayoutGuide.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor, constant: -10),
             collectionView.heightAnchor.constraint(equalToConstant: 160),
             
-            productDetailView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            productDetailView.widthAnchor.constraint(equalTo: entireScrollView.widthAnchor),
+            productDetailView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
             productDetailView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10),
-            productDetailView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            productDetailView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
             productDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
