@@ -59,6 +59,7 @@ final class ProductDetailView: UIView {
     func configurePriceStackView() {
         priceTextField.borderStyle = .roundedRect
         priceTextField.placeholder = PlaceHolder.price.rawValue
+        priceTextField.keyboardType = .numberPad
         segmentedContol.selectedSegmentIndex = 0
         
         segmentedContol.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -73,9 +74,11 @@ final class ProductDetailView: UIView {
         
         discountedPriceTextField.borderStyle = .roundedRect
         discountedPriceTextField.placeholder = PlaceHolder.discountedPrice.rawValue
+        discountedPriceTextField.keyboardType = .numberPad
         
         stockTextField.borderStyle = .roundedRect
         stockTextField.placeholder = PlaceHolder.stock.rawValue
+        stockTextField.keyboardType = .numberPad
     }
     
     func configureEntireStackViewLayout() {
