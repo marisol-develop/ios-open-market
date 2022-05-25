@@ -8,6 +8,8 @@
 import UIKit
 
 class RegistrationViewController: UIViewController {
+    let imagePicker = UIImagePickerController()
+    var imageArray = [UIImage]()
     let rightNavigationButton = UIBarButtonItem(title: "Done", style: .done, target: nil, action: nil)
     
     private lazy var collectionView: UICollectionView = {
@@ -25,9 +27,11 @@ class RegistrationViewController: UIViewController {
         super.viewDidLoad()
         self.view.addSubview(collectionView)
         self.view.addSubview(productDetailView)
+        self.view.backgroundColor = .white
         productDetailView.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
+        imagePicker.delegate = self
         collectionView.register(RegistrationViewCell.self, forCellWithReuseIdentifier: RegistrationViewCell.identifier)
         setLayout()
         self.navigationController?.navigationBar.topItem?.title = "Cancel"
@@ -44,25 +48,61 @@ class RegistrationViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor, constant: -10),
             collectionView.heightAnchor.constraint(equalToConstant: 160),
             
             productDetailView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            productDetailView.topAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            productDetailView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10),
             productDetailView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             productDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    @objc func pickImage(_ sender: UIButton) {
+        let actionSheet = UIAlertController()
+        
+        let importFromAlbum = UIAlertAction(title: "앨범에서 가져오기", style: .default) { _ in
+            self.imagePicker.sourceType = .savedPhotosAlbum
+            self.imagePicker.allowsEditing = true
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let takePhoto = UIAlertAction(title: "카메라로 사진 찍기", style: .default) { _ in
+            self.imagePicker.sourceType = .camera
+            self.imagePicker.cameraCaptureMode = .photo
+            self.imagePicker.allowsEditing = true
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel) { _ in
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        actionSheet.addAction(importFromAlbum)
+        actionSheet.addAction(takePhoto)
+        actionSheet.addAction(cancel)
+        
+        self.present(actionSheet, animated: true, completion: nil)
     }
 }
 
 extension RegistrationViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return imageArray.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RegistrationViewCell.identifier, for: indexPath) as? RegistrationViewCell else {
             return UICollectionViewCell()
+        }
+        
+        cell.button.addTarget(self, action: #selector(self.pickImage(_:)), for: .touchUpInside)
+        
+        cell.contentView.addSubview(cell.button)
+        
+        if imageArray.count > indexPath.row {
+            let image = imageArray[indexPath.row]
+            cell.button.setImage(image, for: .normal)
         }
         
         return cell
@@ -81,4 +121,58 @@ extension RegistrationViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 5.0
     }
+}
+
+extension RegistrationViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        self.dismiss(animated: true) {
+            guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+                return
+            }
+                        
+            self.imageArray.append(image)
+            print(self.imageArray)
+            
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension RegistrationViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let actionSheet = UIAlertController()
+        
+        let importFromAlbum = UIAlertAction(title: "앨범에서 가져오기", style: .default) { _ in
+            self.imagePicker.sourceType = .savedPhotosAlbum
+            self.imagePicker.allowsEditing = true
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let takePhoto = UIAlertAction(title: "카메라로 사진 찍기", style: .default) { _ in
+            self.imagePicker.sourceType = .camera
+            self.imagePicker.cameraCaptureMode = .photo
+            self.imagePicker.allowsEditing = true
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel) { _ in
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        actionSheet.addAction(importFromAlbum)
+        actionSheet.addAction(takePhoto)
+        actionSheet.addAction(cancel)
+        
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+}
+
+extension RegistrationViewController: UINavigationControllerDelegate {
+    
 }
