@@ -44,4 +44,19 @@ final class ProductDetailView: UIView, Drawable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func generateParameters() -> PostRequest {
+            let name = self.productNameTextField.text ?? ""
+            let descriptions = self.descriptionTextView.text ?? ""
+            let priceString = self.priceTextField.text ?? ""
+            let price = Int(priceString) ?? 0
+            let currency = self.segmentedControl.selectedSegmentIndex == 0 ? Currency.KRW : Currency.USD
+            let discountedPriceString = self.discountedPriceTextField.text ?? ""
+            let discountedPrice = Int(discountedPriceString) ?? 0
+            let stockString = self.stockTextField.text ?? ""
+            let stock = Int(stockString) ?? 0
+            let secret = "c7ne65d5oc"
+            
+        return PostRequest(name: name, descriptions: descriptions, price: price, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: secret)
+    }
 }
