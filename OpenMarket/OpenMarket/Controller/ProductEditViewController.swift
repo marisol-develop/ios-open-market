@@ -26,14 +26,12 @@ class ProductEditViewController: UIViewController {
         return collectionView
     }()
     
-    let entireScrollView: UIScrollView = {
+    private let entireScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         
         return scrollView
     }()
     
-    let productDetailView = ProductDetailView()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(entireScrollView)
@@ -54,18 +52,18 @@ class ProductEditViewController: UIViewController {
         setImage()
     }
     
-    func configureBarButton() {
+    private func configureBarButton() {
         self.navigationController?.navigationBar.topItem?.title = "Cancel"
         self.title = "상품수정"
         self.navigationItem.rightBarButtonItem = doneButton
-//        doneButton.isEnabled = false
+        
         doneButton.title = "Done"
         doneButton.style = .done
         doneButton.target = self
         doneButton.action = #selector(executePATCH)
     }
     
-    func setLayout() {
+    private func setLayout() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         productEditView.translatesAutoresizingMaskIntoConstraints = false
         entireScrollView.translatesAutoresizingMaskIntoConstraints = false

@@ -151,10 +151,10 @@
 		64C31D87282C02CF004E5D97 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				B3C4B69228420418009AB73E /* ProductDetailViewController.swift */,
-				B3C4B69428420B9C009AB73E /* ProductEditViewController.swift */,
 				C70FB0FE25BEF61C00C9924E /* MainViewController.swift */,
 				B317DE72283D242700C3420C /* RegistrationViewController.swift */,
+				B3C4B69228420418009AB73E /* ProductDetailViewController.swift */,
+				B3C4B69428420B9C009AB73E /* ProductEditViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
