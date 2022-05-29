@@ -10,7 +10,7 @@ import UIKit
 class ProductEditViewController: UIViewController {
     var productDetail: ProductDetail?
     var imageArray = [UIImage]()
-    let doneButton = UIBarButtonItem()
+    private var imageCount: Int = 1
     private var networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
     private var networkImageArray = [ImageInfo]()
     
@@ -85,6 +85,22 @@ class ProductEditViewController: UIViewController {
             productDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    private func setData() {
+        guard let productDetail = productDetail else {
+            return
+        }
+        
+        presenter = presenter.setData(of: productDetail)
+    }
+    
+    private func setImage() {
+        guard let images = presenter.images else {
+            return
+        }
+        
+        imageCount = images.count
+    }
 }
 
 extension ProductEditViewController: UICollectionViewDataSource {
@@ -98,6 +114,7 @@ extension ProductEditViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
+        cell.setImage(presenter)
         return cell
     }
 }
