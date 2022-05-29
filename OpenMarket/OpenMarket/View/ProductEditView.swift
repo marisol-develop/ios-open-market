@@ -32,6 +32,14 @@ final class ProductEditView: UIView, Drawable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func setEditView(_ presenter: Presenter) {
+        setProductName(presenter)
+        setPrice(presenter)
+        setStock(presenter)
+        setDescription(presenter)
+    }
+    
     func generateParameters() -> PatchRequest {
             let name = self.productNameTextField.text ?? ""
             let description = self.descriptionTextView.text ?? ""
@@ -45,5 +53,30 @@ final class ProductEditView: UIView, Drawable {
             let secret = "c7ne65d5oc"
         
         return PatchRequest(name: name, description: description, thumbnailID: nil , price: price, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: secret)
+    }
+}
+
+// MARK: - setup UI
+extension ProductEditView {
+    private func setProductName(_ presenter: Presenter) {
+        productNameTextField.text = presenter.productName
+    }
+    
+    private func setPrice(_ presenter: Presenter) {
+        priceTextField.text = presenter.price
+        discountedPriceTextField.text = presenter.discountedPrice
+        if presenter.currency == Currency.KRW.rawValue {
+            segmentedControl.selectedSegmentIndex = 0
+        } else {
+            segmentedControl.selectedSegmentIndex = 1
+        }
+    }
+    
+    private func setStock(_ presenter: Presenter) {
+        stockTextField.text = presenter.stock
+    }
+    
+    private func setDescription(_ presenter: Presenter) {
+        descriptionTextView.text = presenter.description
     }
 }
