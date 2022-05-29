@@ -140,6 +140,7 @@
 				6447D2CA283C8394005570BC /* RegistrationViewCell.swift */,
 				B3C4B6C32842A1FE009AB73E /* EditViewCell.swift */,
 				6476B36A283CD3E5006B7F66 /* ProductDetailView.swift */,
+				B3C4B6B828426893009AB73E /* ProductEditView.swift */,
 				6447D2C22838DE8F005570BC /* LayoutType.swift */,
 			);
 			path = View;
@@ -199,7 +200,6 @@
 		C70FB0EE25BEF61C00C9924E = {
 			isa = PBXGroup;
 			children = (
-				B3C4B6B828426893009AB73E /* ProductEditView.swift */,
 				C70FB0F925BEF61C00C9924E /* OpenMarket */,
 				B34973DC282B494D001F9B42 /* OpenMarketTests */,
 				C70FB0F825BEF61C00C9924E /* Products */,
