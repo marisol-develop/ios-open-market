@@ -111,13 +111,13 @@ final class ProductDetailViewController: UIViewController {
     }
     
     private func configurePriceUI() {
-        let IntPrice = Int(presenter.price ?? "0")
-        let IntDiscountedPrice = Int(presenter.discountedPrice ?? "0")
+        let price = Int(presenter.price ?? "0")
+        let discountedPrice = Int(presenter.discountedPrice ?? "0")
 
         productDetailView.priceLabel.numberOfLines = 0
         productDetailView.discountedLabel.numberOfLines = 0
         
-        guard let formattedPrice = IntPrice?.formatNumber() ,let formattedDiscountedPrice = IntDiscountedPrice?.formatNumber(), let currency = presenter.currency else { return }
+        guard let formattedPrice = price?.formatNumber() ,let formattedDiscountedPrice = discountedPrice?.formatNumber(), let currency = presenter.currency else { return }
         
         if presenter.price == presenter.bargainPrice {
             productDetailView.priceLabel.text = "\(currency) \(formattedPrice)"
