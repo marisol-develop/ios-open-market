@@ -84,3 +84,27 @@ final class ProductDetailViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
 }
+
+extension ProductDetailViewController {
+    private func checkPassword(secret: String, completionHandler: @escaping (Result<String, Error>) -> Void) {
+        guard let productId = products.id else {
+            return
+        }
+        
+        self.networkManager.execute(with: .productSecretCheck(productId: productId), httpMethod: .secretPost, secret: secret) { result in
+            switch result {
+            case .success(let secret):
+                guard let data = secret as? Data else {
+                    return
+                }
+                
+                guard let secret = String(data: data, encoding: .utf8) else {
+                    return
+                }
+                
+                completionHandler(.success(secret))
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }

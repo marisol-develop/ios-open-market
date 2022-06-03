@@ -28,7 +28,7 @@ struct NetworkManager<T: Decodable> {
         self.session = session
     }
                 
-    mutating func execute(with endPoint: Endpoint, httpMethod: HTTPMethod, params: Encodable? = nil, images: [ImageInfo]? = nil, completion: @escaping (Result<Any, NetworkError>) -> Void) {
+    mutating func execute(with endPoint: Endpoint, httpMethod: HTTPMethod, params: Encodable? = nil, images: [ImageInfo]? = nil, secret: String? = nil, completion: @escaping (Result<Any, NetworkError>) -> Void) {
         let successRange = 200...299
         switch httpMethod {
         case .get:
@@ -115,9 +115,53 @@ struct NetworkManager<T: Decodable> {
                 }
                 completion(.success(()))
             }.resume()
-        
+            
         case .delete:
-            print("delete")
+            guard let request = requestDELETE(endPoint: endPoint) else {
+                completion(.failure(.request))
+                return
+            }
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                guard error == nil else {
+                    completion(.failure(.error))
+                    return
+                }
+                
+                guard let _ = data else {
+                    completion(.failure(.data))
+                    return
+                }
+                
+                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                    completion(.failure(.statusCode))
+                    return
+                }
+                completion(.success(()))
+            }.resume()
+        case .secretPost:
+            guard let request = requestSecretPOST(endPoint: endPoint, secret: secret ?? "") else {
+                completion(.failure(.request))
+                return
+            }
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                guard error == nil else {
+                    completion(.failure(.error))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(.data))
+                    return
+                }
+                
+                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                    completion(.failure(.statusCode))
+                    return
+                }
+                completion(.success((data)))
+            }.resume()
         }
     }
 }
