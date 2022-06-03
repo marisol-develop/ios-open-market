@@ -10,15 +10,15 @@ import UIKit
 final class ProductDetailView: UIView {
     lazy var entireStackView = makeStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: 20)
     lazy var priceStackView = makeStackView(axis: .vertical, alignment: .trailing, distribution: .fill, spacing: 3)
-    lazy var productInfoStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fillProportionally, spacing: 0)
+    lazy var productInfoStackView = makeStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 0)
     
-    private let entireScrollView = UIScrollView()
+    let entireScrollView = UIScrollView()
     private let productImage = UIImageView()
     let stockLabel = UILabel()
     let priceLabel = UILabel()
     let discountedLabel = UILabel()
     let productNameLabel = UILabel()
-    private let descriptionTextView = UITextView()
+    private let descriptionLabel = UILabel()
     private let currencyLabel = UILabel()
     let pageControl = UIPageControl()
     
@@ -26,6 +26,7 @@ final class ProductDetailView: UIView {
         super.init(frame: frame)
         configureView()
         configurePageControl()
+        setAttribute()
     }
     
     required init?(coder: NSCoder) {
@@ -39,6 +40,11 @@ final class ProductDetailView: UIView {
         setPageControl(presenter)
     }
         
+    private func setAttribute() {
+        priceStackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        discountedLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
+    }
+    
     private func configurePageControl() {
         pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = .lightGray
@@ -48,11 +54,19 @@ final class ProductDetailView: UIView {
 
 extension ProductDetailView {
     private func configureView() {
+        self.addSubview(pageControl)
         self.addSubview(entireScrollView)
         entireScrollView.addSubview(entireStackView)
-        entireStackView.addArrangedSubview([pageControl, productInfoStackView, descriptionTextView])
-        productInfoStackView.addArrangedSubview([productNameLabel, priceStackView])
-        priceStackView.addArrangedSubview([stockLabel, currencyLabel, priceLabel, discountedLabel])
+        entireStackView.addArrangedSubview([
+            productInfoStackView, descriptionLabel
+        ])
+        productInfoStackView.addArrangedSubview([
+            productNameLabel, priceStackView
+        ])
+        
+        priceStackView.addArrangedSubview([
+            stockLabel, priceLabel, currencyLabel, discountedLabel
+        ])
         
         configureLayout()
     }
@@ -60,35 +74,26 @@ extension ProductDetailView {
     private func configureLayout() {
         entireScrollView.translatesAutoresizingMaskIntoConstraints = false
         entireStackView.translatesAutoresizingMaskIntoConstraints = false
-        productInfoStackView.translatesAutoresizingMaskIntoConstraints = false
-        priceStackView.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            productInfoStackView.topAnchor.constraint(equalTo: pageControl.bottomAnchor),
-            productNameLabel.widthAnchor.constraint(equalTo: productInfoStackView.widthAnchor, multiplier: 0.6),
-            priceStackView.widthAnchor.constraint(equalTo: productInfoStackView.widthAnchor, multiplier: 0.4)
-        ])
-        
-        NSLayoutConstraint.activate([
-            entireScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            entireScrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-            entireScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            entireScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
+            entireScrollView.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 10),
+            entireScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
             entireScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            self.entireStackView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
-            self.entireStackView.topAnchor.constraint(equalTo: entireScrollView.topAnchor),
-            self.entireStackView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
-            self.entireStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            self.entireStackView.widthAnchor.constraint(equalTo: entireScrollView.frameLayoutGuide.widthAnchor)
+            entireStackView.leadingAnchor.constraint(equalTo: entireScrollView.contentLayoutGuide.leadingAnchor),
+            entireStackView.topAnchor.constraint(equalTo: entireScrollView.contentLayoutGuide.topAnchor),
+            entireStackView.trailingAnchor.constraint(equalTo: entireScrollView.contentLayoutGuide.trailingAnchor),
+            entireStackView.bottomAnchor.constraint(equalTo: entireScrollView.contentLayoutGuide.bottomAnchor),
+            entireStackView.widthAnchor.constraint(equalTo: entireScrollView.frameLayoutGuide.widthAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            pageControl.leadingAnchor.constraint(equalTo: entireStackView.leadingAnchor),
-            pageControl.topAnchor.constraint(equalTo: entireStackView.topAnchor),
-            pageControl.trailingAnchor.constraint(equalTo: entireStackView.trailingAnchor)
+            pageControl.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            pageControl.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            pageControl.topAnchor.constraint(equalTo: self.topAnchor)
         ])
     }
 }
@@ -103,11 +108,13 @@ extension ProductDetailView {
         guard let stock = presenter.stock else { return }
         
         stockLabel.text = "남은 수량 : \(stock)"
-        stockLabel.numberOfLines = 0
     }
     
     private func setDescription(_ presenter: Presenter) {
-        descriptionTextView.text = presenter.description
+        descriptionLabel.text = presenter.description
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
     }
     
     private func setPageControl(_ presenter: Presenter) {
