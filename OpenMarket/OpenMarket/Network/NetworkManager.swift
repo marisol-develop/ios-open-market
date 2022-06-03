@@ -88,7 +88,7 @@ struct NetworkManager<T: Decodable> {
             }.resume()
             
         case .patch:
-            guard let params = params as? ProductForPatch else {
+            guard let params = params as? ProductForPATCH else {
                 completion(.failure(.data))
                 return
             }
@@ -139,7 +139,7 @@ extension NetworkManager {
         request.httpMethod = "POST"
         request.addValue("multipart/form-data; boundary=\"\(boundary)\"",
                          forHTTPHeaderField: "Content-Type")
-        request.addValue(UserInformation.identifer, forHTTPHeaderField: "identifier")
+        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
         request.addValue("eddy123", forHTTPHeaderField: "accessId")
         request.httpBody = createPOSTBody(requestInfo: params, images: images, boundary: boundary)
         
@@ -189,18 +189,18 @@ extension NetworkManager {
 
 // MARK: - PATCH
 extension NetworkManager {
-    private func createPATCHBody(requestInfo: ProductForPatch) -> Data? {
+    private func createPATCHBody(requestInfo: ProductForPATCH) -> Data? {
         return try? JSONEncoder().encode(requestInfo)
     }
     
-    private func requestPATCH(endPoint: Endpoint, params: ProductForPatch) -> URLRequest? {
+    private func requestPATCH(endPoint: Endpoint, params: ProductForPATCH) -> URLRequest? {
         guard let url = endPoint.url else {
             return nil
         }
                 
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
-        request.addValue(UserInformation.identifer, forHTTPHeaderField: "identifier")
+        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
         request.httpBody = createPATCHBody(requestInfo: params)
         
         return request
