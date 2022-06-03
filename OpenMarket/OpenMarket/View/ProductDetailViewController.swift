@@ -33,7 +33,7 @@ final class ProductDetailViewController: UIViewController {
         }
         for index in 0..<images.count {
             let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFit
+            imageView.contentMode = .scaleToFill
             imageView.frame = CGRect(
                 x: self.view.frame.width * CGFloat(index),
                 y: 0,
@@ -95,9 +95,9 @@ final class ProductDetailViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            imageScrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            imageScrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+            imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            imageScrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            imageScrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             imageScrollView.bottomAnchor.constraint(equalTo: productDetailView.pageControl.topAnchor),
             imageScrollView.heightAnchor.constraint(equalToConstant: 300)
         ])
@@ -114,6 +114,9 @@ final class ProductDetailViewController: UIViewController {
         let IntPrice = Int(presenter.price ?? "0")
         let IntDiscountedPrice = Int(presenter.discountedPrice ?? "0")
 
+        productDetailView.priceLabel.numberOfLines = 0
+        productDetailView.discountedLabel.numberOfLines = 0
+        
         guard let formattedPrice = IntPrice?.formatNumber() ,let formattedDiscountedPrice = IntDiscountedPrice?.formatNumber(), let currency = presenter.currency else { return }
         
         if presenter.price == presenter.bargainPrice {
