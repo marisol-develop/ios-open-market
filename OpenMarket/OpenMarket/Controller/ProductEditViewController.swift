@@ -118,11 +118,11 @@ extension ProductEditViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        guard let imageUrl = URL(string: imageArray[indexPath.row]) else {
-            return UICollectionViewCell()
-        }
+        guard let imageUrl = imageArray[indexPath.row].url else { return UICollectionViewCell() }
         
-        guard let data = try? Data(contentsOf: imageUrl) else {
+        guard let imageUU = URL(string: imageUrl) else { return UICollectionViewCell() }
+        
+        guard let data = try? Data(contentsOf: imageUU) else {
             return UICollectionViewCell()
         }
         let image = UIImage(data: data)
