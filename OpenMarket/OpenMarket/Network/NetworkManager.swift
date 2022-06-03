@@ -250,3 +250,32 @@ extension NetworkManager {
         return request
     }
 }
+
+// MARK: - DELETE
+extension NetworkManager {
+    private func requestSecretPOST(endPoint: Endpoint, secret: String) -> URLRequest? {
+        guard let url = endPoint.url else {
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = "{\"secret\": \"\(secret)\"}".data(using: .utf8)
+        
+        return request
+    }
+    
+    private func requestDELETE(endPoint: Endpoint) -> URLRequest? {
+        guard let url = endPoint.url else {
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
+        
+        return request
+    }
+}
