@@ -7,6 +7,11 @@
 
 import UIKit
 
+private enum UserInformation {
+    static let identifier: String = "affb87d9-d1b7-11ec-9676-d3cd1a738d6f"
+    static var secret: String = "c7ne65d5oc"
+}
+
 private enum Alert {
     static let productDelete = "상품삭제"
     static let inputPassword = "비밀번호 입력"
@@ -26,7 +31,7 @@ private enum Alert {
 final class ProductDetailViewController: UIViewController {
     private let products: Products
     private var productDetail: ProductDetail?
-    private var networkManager = NetworkManager<ProductDetail>(session: URLSession.shared)
+    private var networkManager = NetworkManager()
     private let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: #selector(cancelButtonDidTapped(_:)))
     private var presenter = Presenter()
     private let productDetailView = ProductDetailView()
@@ -56,7 +61,7 @@ final class ProductDetailViewController: UIViewController {
         super.viewDidLoad()
         imageScrollView.delegate = self
         setView()
-        executeGET()
+        showProductDetail()
         setLayout()
         configureBarButton()
     }
@@ -67,15 +72,20 @@ final class ProductDetailViewController: UIViewController {
         setScrollView()
     }
     
-    private func executeGET() {
+    private func showProductDetail() {
         guard let id = self.products.id else {
             return
         }
         
-        self.networkManager.execute(with: .productEdit(productId: id), httpMethod: .get) { result in
+        let getAPI = Detail(productId: id)
+        
+        self.networkManager.execute(with: getAPI) { result in
             switch result {
-            case .success(let result):
-                guard let result = result as? ProductDetail else { return }
+            case .success(let data):
+                let decodedData = try? JSONDecoder().decode(ProductDetail.self, from: data)
+                guard let result = decodedData else {
+                    return
+                }
                 self.productDetail = result 
             case .failure(let error):
                 print(error.localizedDescription)
@@ -104,7 +114,7 @@ final class ProductDetailViewController: UIViewController {
                 self.checkPassword(secret: secret) { result in
                     switch result {
                     case .success(let secret):
-                        self.executeDELETE(secret: secret)
+                        self.deleteButtonDidTapped(secret: secret)
                     case .failure(_):
                         DispatchQueue.main.async {
                             self.showWrongPasswordAlert()
@@ -251,30 +261,33 @@ extension ProductDetailViewController {
             return
         }
         
-        self.networkManager.execute(with: .productSecretCheck(productId: productId), httpMethod: .secretPost, secret: secret) { result in
+        let postAPI = Secret(productId: productId)
+        
+        self.networkManager.execute(with: postAPI) { result in
             switch result {
             case .success(let secret):
-                guard let data = secret as? Data else {
-                    return
-                }
+                let data = secret
                 
                 guard let secret = String(data: data, encoding: .utf8) else {
                     return
                 }
                 
-                completionHandler(.success(secret))
+                UserInformation.secret = secret
+                completionHandler(.success(UserInformation.secret))
             case .failure(let error):
                 completionHandler(.failure(error))
             }
         }
     }
     
-    @objc private func executeDELETE(secret: String) {
+    @objc private func deleteButtonDidTapped(secret: String) {
         guard let productId = products.id else {
             return
         }
         
-        self.networkManager.execute(with: .productDelete(productId: productId, secret: secret), httpMethod: .delete) {
+        let deleteAPI = Delete(productId: productId, secret: UserInformation.secret)
+        
+        self.networkManager.execute(with: deleteAPI) {
             result in
             switch result {
             case .success:
