@@ -163,8 +163,8 @@ extension ProductDetailViewController {
     }
     
     private func setView() {
+        self.view.addSubview(imageScrollView)
         self.view.addSubview(productDetailView)
-        productDetailView.addSubview(imageScrollView)
         
         self.view.backgroundColor = .white
         productDetailView.backgroundColor = .white
@@ -175,18 +175,17 @@ extension ProductDetailViewController {
         productDetailView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            productDetailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            productDetailView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            productDetailView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            productDetailView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            imageScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            imageScrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            imageScrollView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor, constant: -10),
+            imageScrollView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.4)
         ])
         
         NSLayoutConstraint.activate([
-            imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            imageScrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            imageScrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            imageScrollView.bottomAnchor.constraint(equalTo: productDetailView.pageControl.topAnchor),
-            imageScrollView.heightAnchor.constraint(equalToConstant: 300)
+            productDetailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            productDetailView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            productDetailView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
     }
     
@@ -222,9 +221,6 @@ extension ProductDetailViewController {
     private func configurePriceUI() {
         let price = Int(presenter.price ?? "0")
         let discountedPrice = Int(presenter.discountedPrice ?? "0")
-
-        productDetailView.priceLabel.numberOfLines = 0
-        productDetailView.discountedLabel.numberOfLines = 0
         
         guard let formattedPrice = price?.formatNumber() ,let formattedDiscountedPrice = discountedPrice?.formatNumber(), let currency = presenter.currency else { return }
         
@@ -246,7 +242,7 @@ extension ProductDetailViewController {
     }
     
     private func configureProductNameUI() {
-        productDetailView.productNameLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        productDetailView.productNameLabel.font = .systemFont(ofSize: 15, weight: .bold)
     }
     
     private func configureStockUI() {
@@ -330,7 +326,7 @@ extension ProductDetailViewController {
 // MARK: - UIScrollViewDelegate
 extension ProductDetailViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let size = imageScrollView.contentOffset.x / imageScrollView.frame.width
+        let size = imageScrollView.contentOffset.x / self.view.frame.width
         productDetailView.pageControl.currentPage = Int(round(size))
     }
 }
