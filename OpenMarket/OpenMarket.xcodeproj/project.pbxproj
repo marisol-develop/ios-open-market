@@ -18,7 +18,6 @@
 		6476B3B3284370BA006B7F66 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6476B3B2284370BA006B7F66 /* NetworkManager.swift */; };
 		6476B3B5284370E0006B7F66 /* ProductsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6476B3B4284370E0006B7F66 /* ProductsList.swift */; };
 		64E900C4282AAF7300FD415B /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E900C3282AAF7300FD415B /* HTTPMethod.swift */; };
-		B313CFC4284A078700BD65C6 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CFC3284A078700BD65C6 /* HTTPRequest.swift */; };
 		B317DE6D283926BC00C3420C /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B317DE6C283926BC00C3420C /* Presenter.swift */; };
 		B317DE73283D242700C3420C /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B317DE72283D242700C3420C /* RegistrationViewController.swift */; };
 		B31DF4EC2845B2CB00AA8022 /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31DF4EB2845B2CB00AA8022 /* Currency.swift */; };
@@ -67,7 +66,6 @@
 		6476B3B4284370E0006B7F66 /* ProductsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsList.swift; sourceTree = "<group>"; };
 		64C31DF5282E446C004E5D97 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		64E900C3282AAF7300FD415B /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
-		B313CFC3284A078700BD65C6 /* HTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		B317DE6C283926BC00C3420C /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 		B317DE72283D242700C3420C /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		B31DF4EB2845B2CB00AA8022 /* Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
@@ -171,7 +169,6 @@
 				6447D28B2835D69A005570BC /* Products.swift */,
 				6476B3B4284370E0006B7F66 /* ProductsList.swift */,
 				B3C4B6C12842976C009AB73E /* ProductDetail.swift */,
-				B313CFC3284A078700BD65C6 /* HTTPRequest.swift */,
 				B317DE6C283926BC00C3420C /* Presenter.swift */,
 			);
 			path = Model;
