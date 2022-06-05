@@ -22,9 +22,9 @@ final class RegistrationViewController: UIViewController, UINavigationController
     private let imagePicker = UIImagePickerController()
     private var imageArray = [UIImage]()
     private let doneButton = UIBarButtonItem()
-    private var networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
+    private var networkManager = NetworkManager()
     private var networkImageArray = [ImageInfo]()
-    private let productDetailView = ProductRegistrationView()
+    private let productRegistrationView = ProductRegistrationView()
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -52,10 +52,10 @@ final class RegistrationViewController: UIViewController, UINavigationController
     private func setView() {
         self.view.addSubview(entireScrollView)
         entireScrollView.addSubview(collectionView)
-        entireScrollView.addSubview(productDetailView)
+        entireScrollView.addSubview(productRegistrationView)
         
         self.view.backgroundColor = .white
-        productDetailView.backgroundColor = .white
+        productRegistrationView.backgroundColor = .white
         
         collectionView.register(RegistrationViewCell.self, forCellWithReuseIdentifier: RegistrationViewCell.identifier)
     }
@@ -74,12 +74,12 @@ final class RegistrationViewController: UIViewController, UINavigationController
         doneButton.title = "Done"
         doneButton.style = .done
         doneButton.target = self
-        doneButton.action = #selector(executePOST)
+        doneButton.action = #selector(doneButtonDidTapped)
     }
     
     private func setLayout() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        productDetailView.translatesAutoresizingMaskIntoConstraints = false
+        productRegistrationView.translatesAutoresizingMaskIntoConstraints = false
         entireScrollView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -95,16 +95,16 @@ final class RegistrationViewController: UIViewController, UINavigationController
             collectionView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: entireScrollView.safeAreaLayoutGuide.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: productDetailView.topAnchor, constant: -10),
+            collectionView.bottomAnchor.constraint(equalTo: productRegistrationView.topAnchor, constant: -10),
             collectionView.heightAnchor.constraint(equalToConstant: 160),
         ])
         
         NSLayoutConstraint.activate([
-            productDetailView.widthAnchor.constraint(equalTo: entireScrollView.widthAnchor),
-            productDetailView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
-            productDetailView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10),
-            productDetailView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
-            productDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            productRegistrationView.widthAnchor.constraint(equalTo: entireScrollView.widthAnchor),
+            productRegistrationView.leadingAnchor.constraint(equalTo: entireScrollView.leadingAnchor),
+            productRegistrationView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10),
+            productRegistrationView.trailingAnchor.constraint(equalTo: entireScrollView.trailingAnchor),
+            productRegistrationView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -219,12 +219,16 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
 }
 
 extension RegistrationViewController {
-    @objc private func executePOST() {
-        let params = productDetailView.makeProduct()
+    @objc private func doneButtonDidTapped() {
+        var postAPI = Registration()
+        postAPI.item = productRegistrationView.makeProduct()
+        postAPI.item?.images = self.networkImageArray
         
-        self.networkManager.execute(with: .productRegistration, httpMethod: .post, params: params, images: self.networkImageArray) { result in
+        self.networkManager.execute(with: postAPI) { result in
             switch result {
-            case .success:
+            case .success(let data):
+                let decodedData = try! JSONDecoder().decode(ProductDetail.self, from: data)
+                print(decodedData)
                 DispatchQueue.main.async {
                     self.showSuccessAlert()
                 }

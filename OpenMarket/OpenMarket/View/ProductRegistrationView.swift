@@ -38,17 +38,17 @@ final class ProductRegistrationView: UIView, Drawable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func makeProduct() -> ProductForPOST {
-            let name = self.productNameTextField.text ?? ""
-            let descriptions = self.descriptionTextView.text ?? ""
-            let priceString = self.priceTextField.text ?? ""
-            let price = Int(priceString) ?? 0
-            let currency = self.segmentedControl.selectedSegmentIndex == 0 ? Currency.KRW : Currency.USD
-            let discountedPriceString = self.discountedPriceTextField.text ?? ""
-            let discountedPrice = Int(discountedPriceString) ?? 0
-            let stockString = self.stockTextField.text ?? ""
-            let stock = Int(stockString) ?? 0
-            
-        return ProductForPOST(name: name, descriptions: descriptions, price: price, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: UserInformation.secret)
+    func makeProduct() -> Item {
+        let name = self.productNameTextField.text ?? ""
+        let descriptions = self.descriptionTextView.text ?? ""
+        let priceString = self.priceTextField.text ?? ""
+        let price = Int(priceString) ?? 0
+        let currency = self.segmentedControl.selectedSegmentIndex == 0 ? Currency.KRW : Currency.USD
+        let discountedPriceString = self.discountedPriceTextField.text ?? ""
+        let discountedPrice = Int(discountedPriceString) ?? 0
+        let stockString = self.stockTextField.text ?? ""
+        let stock = Int(stockString) ?? 0
+        
+        return Item(name: name, descriptions: descriptions, price: price, thumbnailID: nil, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: UserInformation.secret, images: nil)
     }
 }
