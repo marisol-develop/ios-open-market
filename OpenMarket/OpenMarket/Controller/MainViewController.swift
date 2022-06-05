@@ -32,7 +32,7 @@ final class MainViewController: UIViewController {
 
     private let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: #selector(cancelButtonDidTapped(_:)))
     
-    private var networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
+    private var networkManager = NetworkManager()
     private lazy var item: [Products] = [] {
         didSet {
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
@@ -58,7 +58,7 @@ final class MainViewController: UIViewController {
         super.viewDidAppear(animated)
         self.item.removeAll()
         pageNo = 1
-        self.executeGET(number: pageNo)
+        self.showList(number: pageNo)
     }
 }
 
@@ -113,7 +113,7 @@ extension MainViewController {
         DispatchQueue.main.async {
             self.item.removeAll()
             self.pageNo = 1
-            self.executeGET(number: self.pageNo)
+            self.showList(number: self.pageNo)
             refresh.endRefreshing()
         }
     }
@@ -121,11 +121,13 @@ extension MainViewController {
 
 // MARK: - setup DataSource
 extension MainViewController {
-    private func executeGET(number: Int) {
-        self.networkManager.execute(with: .productList(pageNumber: number, itemsPerPage: 20), httpMethod: .get) { result in
+    private func showList(number: Int) {
+        let getAPI = List(pageNo: number, itemsPerPage: 20)
+        self.networkManager.execute(with: getAPI) { result in
             switch result {
-            case .success(let result):
-                guard let result = result as? ProductsList else { return }
+            case .success(let data):
+                let decodedData = try? JSONDecoder().decode(ProductsList.self, from: data)
+                guard let result = decodedData else { return }
                 self.pageNo = result.pageNo
                 self.item.append(contentsOf: result.pages)
             case .failure(let error):
@@ -226,7 +228,7 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
         
         if currentPage + 1 == pageNo {
             pageNo += 1
-            executeGET(number: pageNo)
+            showList(number: pageNo)
         }
     }
 }
