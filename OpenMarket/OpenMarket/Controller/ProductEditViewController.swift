@@ -18,7 +18,7 @@ private enum Alert {
 final class ProductEditViewController: UIViewController {
     private var productDetail: ProductDetail
     private var networkImageArray = [ImageInfo]()
-    private var networkManager = NetworkManager<ProductsList>(session: URLSession.shared)
+    private var networkManager = NetworkManager()
     private var presenter = Presenter()
     
     private let productEditView = ProductEditView()
@@ -79,7 +79,7 @@ final class ProductEditViewController: UIViewController {
         doneButton.title = "Done"
         doneButton.style = .done
         doneButton.target = self
-        doneButton.action = #selector(executePATCH)
+        doneButton.action = #selector(doneButtonDidTapped)
     }
     
     private func setLayout() {
@@ -154,15 +154,15 @@ extension ProductEditViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension ProductEditViewController {
-    @objc private func executePATCH() {
-        let params = productEditView.makeProduct()
-        
-        
+    @objc private func doneButtonDidTapped() {
         guard let productID = self.productDetail.id else {
             return
         }
         
-        self.networkManager.execute(with: .productEdit(productId: productID), httpMethod: .patch, params: params) { result in
+        var patchAPI = Edit(productId: productID)
+        patchAPI.item = productEditView.makeProduct()
+        
+        self.networkManager.execute(with: patchAPI) { result in
             switch result {
             case .success:
                 DispatchQueue.main.async {

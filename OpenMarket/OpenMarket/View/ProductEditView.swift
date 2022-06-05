@@ -45,18 +45,18 @@ final class ProductEditView: UIView, Drawable {
         setDescription(presenter)
     }
     
-    func makeProduct() -> ProductForPATCH {
-            let name = self.productNameTextField.text ?? ""
-            let description = self.descriptionTextView.text ?? ""
-            let priceString = self.priceTextField.text ?? ""
-            let price = Int(priceString) ?? 0
-            let currency = self.segmentedControl.selectedSegmentIndex == 0 ? Currency.KRW : Currency.USD
-            let discountedPriceString = self.discountedPriceTextField.text ?? ""
-            let discountedPrice = Int(discountedPriceString) ?? 0
-            let stockString = self.stockTextField.text ?? ""
-            let stock = Int(stockString) ?? 0
+    func makeProduct() -> Item {
+        let name = self.productNameTextField.text ?? ""
+        let description = self.descriptionTextView.text ?? ""
+        let priceString = self.priceTextField.text ?? ""
+        let price = Int(priceString) ?? 0
+        let currency = self.segmentedControl.selectedSegmentIndex == 0 ? Currency.KRW : Currency.USD
+        let discountedPriceString = self.discountedPriceTextField.text ?? ""
+        let discountedPrice = Int(discountedPriceString) ?? 0
+        let stockString = self.stockTextField.text ?? ""
+        let stock = Int(stockString) ?? 0
         
-        return ProductForPATCH(name: name, descriptions: description, thumbnailID: nil , price: price, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: UserInformation.secret)
+        return Item(name: name, descriptions: description, price: price, thumbnailID: nil, currency: currency, discountedPrice: discountedPrice, stock: stock, secret: UserInformation.secret, images: nil)
     }
 }
 
