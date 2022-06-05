@@ -9,6 +9,7 @@ import Foundation
 
 private enum UserInformation {
     static let identifier: String = "affb87d9-d1b7-11ec-9676-d3cd1a738d6f"
+    static let secret: String = "c7ne65d5oc"
 }
 
 enum NetworkError: Error {
@@ -19,25 +20,46 @@ enum NetworkError: Error {
     case request
 }
 
-struct ImageInfo {
+struct ImageInfo: Encodable {
     let fileName: String
     let data: Data
     let type: String
 }
 
-struct NetworkManager<T: Decodable> {
+struct NetworkManager {
     private var session: URLSessionProtocol
     
-    init(session: URLSessionProtocol) {
+    init(session: URLSessionProtocol = URLSession.shared) {
         self.session = session
     }
-                
-    mutating func execute(with endPoint: Endpoint, httpMethod: HTTPMethod, params: Encodable? = nil, images: [ImageInfo]? = nil, secret: String? = nil, completion: @escaping (Result<Any, NetworkError>) -> Void) {
+    
+    mutating func execute(with apiAble: APIable, completion: @escaping (Result<Data, NetworkError>) -> Void) {
         let successRange = 200...299
-
-        switch httpMethod {
+        var request: URLRequest?
+        
+        switch apiAble.method {
         case .get:
-            session.dataTask(with: endPoint) { response in
+            var urlComponent = URLComponents(string: apiAble.url + apiAble.path)
+            
+            if apiAble.params != nil {
+                urlComponent?.queryItems = apiAble.params?.compactMap{
+                    URLQueryItem(name: $0.key, value: $0.value)
+                }
+            } else {
+                guard let intId = apiAble.productId else {
+                    return
+                }
+                
+                let productId = "/\(String(intId))"
+                
+                urlComponent = URLComponents(string: apiAble.url + apiAble.path + productId)
+            }
+            
+            guard let url = urlComponent?.url else {
+                return
+            }
+            
+            session.dataTask(with: url) { response in
                 guard response.error == nil else {
                     completion(.failure(.error))
                     return
@@ -52,124 +74,38 @@ struct NetworkManager<T: Decodable> {
                     completion(.failure(.data))
                     return
                 }
-                
-                do {
-                    let decoder = JSONDecoder()
-                    let result = try decoder.decode(T.self, from: data)
-                    completion(.success(result))
-                } catch {
-                    completion(.failure(.decode))
-                }
+                completion(.success(data))
             }
-            
         case .post:
-            guard let params = params as? ProductForPOST,
-                  let images = images else {
-                completion(.failure(.data))
-                return
-            }
-            
-            guard let request = requestPOST(endPoint: endPoint, params: params, images: images) else {
-                completion(.failure(.request))
-                return
-            }
-            
-            URLSession.shared.dataTask(with: request) { (data, response, error) in
-                guard error == nil else {
-                    completion(.failure(.error))
-                    return
-                }
-                
-                guard let _ = data else {
-                    completion(.failure(.data))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                    completion(.failure(.statusCode))
-                    return
-                }
-                                                       
-                completion(.success(()))
-            }.resume()
-            
+            request = makePOSTRequest(apiAble: apiAble)
         case .patch:
-            guard let params = params as? ProductForPATCH else {
-                completion(.failure(.data))
-                return
-            }
-            
-            guard let request = requestPATCH(endPoint: endPoint, params: params) else {
-                completion(.failure(.request))
-                return
-            }
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard error == nil else {
-                    completion(.failure(.error))
-                    return
-                }
-                
-                guard let _ = data else {
-                    completion(.failure(.data))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                    completion(.failure(.statusCode))
-                    return
-                }
-                                                       
-                completion(.success(()))
-            }.resume()
-            
+            request = makePATCHRequest(apiAble: apiAble)
         case .delete:
-            guard let request = requestDELETE(endPoint: endPoint) else {
-                completion(.failure(.request))
+            request = makeDELETERequest(apiAble: apiAble)
+        }
+        
+        if apiAble.method != .get {
+            guard let request = request else {
                 return
             }
             
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard error == nil else {
+            session.dataTask(with: request) { response in
+                guard response.error == nil else {
                     completion(.failure(.error))
                     return
                 }
                 
-                guard let _ = data else {
-                    completion(.failure(.data))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                guard successRange.contains(response.statusCode) else {
                     completion(.failure(.statusCode))
                     return
                 }
-                                                       
-                completion(.success(()))
-            }.resume()
-        case .secretPost:
-            guard let request = requestSecretPOST(endPoint: endPoint, secret: secret ?? "") else {
-                completion(.failure(.request))
-                return
+                
+                guard let data = response.data else {
+                    completion(.failure(.data))
+                    return
+                }
+                completion(.success(data))
             }
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard error == nil else {
-                    completion(.failure(.error))
-                    return
-                }
-                
-                guard let data = data else {
-                    completion(.failure(.data))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                    completion(.failure(.statusCode))
-                    return
-                }
-                completion(.success((data)))
-            }.resume()
         }
     }
 }
@@ -180,33 +116,43 @@ extension NetworkManager {
         return "\(UUID().uuidString)"
     }
     
-    mutating private func requestPOST(endPoint: Endpoint, params: ProductForPOST, images: [ImageInfo]) -> URLRequest? {
+    mutating private func makePOSTRequest(apiAble: APIable) -> URLRequest? {
         let boundary = generateBoundary()
         
-        guard let url = endPoint.url else {
-            return nil
+        if let item = apiAble.item {
+            let urlString = apiAble.url + apiAble.path
+            
+            guard let url = URL(string: urlString) else {
+                return nil
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("multipart/form-data; boundary=\"\(boundary)\"",
+                             forHTTPHeaderField: "Content-Type")
+            request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
+            request.addValue("eddy123", forHTTPHeaderField: "accessId")
+            request.httpBody = createPOSTBody(requestInfo: item, boundary: boundary)
+            
+            return request
+        } else {
+            return makeSecretPOSTRequest(apiAble: apiAble)
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("multipart/form-data; boundary=\"\(boundary)\"",
-                         forHTTPHeaderField: "Content-Type")
-        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
-        request.addValue("eddy123", forHTTPHeaderField: "accessId")
-        request.httpBody = createPOSTBody(requestInfo: params, images: images, boundary: boundary)
-        
-        return request
     }
     
-    private func createPOSTBody(requestInfo: ProductForPOST, images: [ImageInfo], boundary: String) -> Data? {
+    private func createPOSTBody(requestInfo: Item, boundary: String) -> Data? {
         var body: Data = Data()
         
         guard let jsonData = try? JSONEncoder().encode(requestInfo) else {
             return nil
         }
         
+        guard let imageInfo = requestInfo.images else {
+            return nil
+        }
+        
         body.append(convertDataToMultiPartForm(value: jsonData, boundary: boundary))
-        body.append(convertFileToMultiPartForm(imageInfo: images, boundary: boundary))
+        body.append(convertFileToMultiPartForm(imageInfo: imageInfo, boundary: boundary))
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
         
         return body
@@ -237,46 +183,76 @@ extension NetworkManager {
         
         return data
     }
+    
+    private func makeSecretPOSTRequest(apiAble: APIable) -> URLRequest? {
+        guard let intId = apiAble.productId else {
+            return nil
+        }
+        
+        let productId = "/\(String(intId))"
+        let secret = "/secret"
+        let urlString = apiAble.url + apiAble.path + productId + secret
+
+        guard let url = URL(string: urlString) else {
+            return nil
+        }
+                
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = "{\"secret\": \"\(UserInformation.secret)\"}".data(using: .utf8)
+        
+        return request
+    }
 }
 
 // MARK: - PATCH
 extension NetworkManager {
-    private func createPATCHBody(requestInfo: ProductForPATCH) -> Data? {
-        return try? JSONEncoder().encode(requestInfo)
-    }
-    
-    private func requestPATCH(endPoint: Endpoint, params: ProductForPATCH) -> URLRequest? {
-        guard let url = endPoint.url else {
+    private func makePATCHRequest(apiAble: APIable) -> URLRequest? {
+        guard let intId = apiAble.productId else {
+            return nil
+        }
+        
+        let productId = "/\(String(intId))"
+        
+        guard let url = URL(string: apiAble.url + apiAble.path + productId) else {
+            return nil
+        }
+        
+        guard let item = apiAble.item else {
             return nil
         }
                 
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
         request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
-        request.httpBody = createPATCHBody(requestInfo: params)
+        request.httpBody = createPATCHBody(requestInfo: item)
         
         return request
+    }
+    
+    private func createPATCHBody(requestInfo: Item) -> Data? {
+        return try? JSONEncoder().encode(requestInfo)
     }
 }
 
 // MARK: - DELETE
 extension NetworkManager {
-    private func requestSecretPOST(endPoint: Endpoint, secret: String) -> URLRequest? {
-        guard let url = endPoint.url else {
+    private func makeDELETERequest(apiAble: APIable) -> URLRequest? {
+        guard let intId = apiAble.productId else {
+            return nil
+        }
+        guard let secret = apiAble.secret else {
             return nil
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue(UserInformation.identifier, forHTTPHeaderField: "identifier")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = "{\"secret\": \"\(secret)\"}".data(using: .utf8)
+        let productId = "/\(String(intId))"
+        let productSecret = "/\(secret)"
         
-        return request
-    }
-    
-    private func requestDELETE(endPoint: Endpoint) -> URLRequest? {
-        guard let url = endPoint.url else {
+        let urlString = apiAble.url + apiAble.path + productId + productSecret
+        
+        guard let url = URL(string: urlString) else {
             return nil
         }
         
